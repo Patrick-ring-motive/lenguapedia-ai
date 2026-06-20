@@ -16,8 +16,7 @@ const aiRunBytes = async(...args) =>{
 
 const imgDefaults ={num_steps:4};
 
-
- export async function onRequest(request, env, ctx) {
+export async function onRequest(request, env, ctx) {
     const reqURL = new URL(request.url);
     const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
     if (promptCache[prompt]) {
