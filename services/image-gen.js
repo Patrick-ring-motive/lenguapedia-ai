@@ -51,7 +51,7 @@ const imgDefaults ={num_steps:4};
     }
 
    if (avg < 89) {
-      inputs.prompt= 'a family friendly artistic image of ' + input.prompt;
+      inputs.prompt= 'a family friendly artistic image of ' + inputs.prompt;
       bytes = await aiRunBytes(imageModel,inputs);
     }
 
