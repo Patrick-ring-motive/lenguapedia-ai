@@ -1,3 +1,4 @@
+let imageModel = "@cf/bytedance/stable-diffusion-xl-lightning";
 const cacheHeaders = {};
 const seconds = 31535000;
 for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cache-Control", "Surrogate-Control", "Vercel-CDN-Cache-Control"]) {
@@ -25,7 +26,7 @@ const promptCache = {};
     };
 
     let stream = await env.AI.run(
-      "@cf/bytedance/stable-diffusion-xl-lightning",
+      imageModel,
       inputs
     );
 
@@ -40,7 +41,7 @@ const promptCache = {};
         num_steps: 4
       };
       stream = await env.AI.run(
-        "@cf/bytedance/stable-diffusion-xl-lightning",
+        imageModel,
         inputs
       );
 
@@ -56,7 +57,7 @@ const promptCache = {};
         num_steps: 4
       };
       stream = await env.AI.run(
-        "@cf/bytedance/stable-diffusion-xl-lightning",
+        imageModel,
         inputs
       );
       resStream = new Response(stream);
