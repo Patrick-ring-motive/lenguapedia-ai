@@ -26,6 +26,7 @@ const getRefHost = req =>{
       host = new URL(headers.get('referer')).host;
     }catch{}
     host ||= headers.get('x-forwarded-host')||'';
+    return host;
   }catch{
     return '';
   }
