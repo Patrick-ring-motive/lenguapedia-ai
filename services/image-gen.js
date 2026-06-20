@@ -27,9 +27,8 @@ const getRefHost = req =>{
     }catch{}
     host ||= headers.get('x-forwarded-host')||'';
     return host;
-  }catch{
-    return '';
-  }
+  }catch{}
+  return '';
 };
 
 export async function onRequest(request, env, ctx) {
