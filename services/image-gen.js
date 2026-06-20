@@ -7,59 +7,61 @@ for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cach
 }
 const promptCache = {};
 
-const aiRunBytes = async(...args) =>{
+const aiRunBytes = async (...args) => {
   const stream = await env.AI.run(...args);
   const resStream = new Response(stream);
   const bytes = await resStream.bytes();
   return bytes;
 };
 
-const imgDefaults ={num_steps:4};
+const imgDefaults = {
+  num_steps: 4
+};
 
 export async function onRequest(request, env, ctx) {
-    const reqURL = new URL(request.url);
-    const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
-    if (promptCache[prompt]) {
-      return new Response(new Uint8Array(promptCache[prompt]), {
-        headers: {
-          "content-type": "image/jpg",
-          "access-control-allow-origin": "*",
-          ...cacheHeaders
-        },
-      });
-    }
-
-    let inputs = {
-      prompt,
-      ...imgDefaults
-    };
-
-    let bytes = await aiRunBytes(imageModel,inputs);
-    let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-
-    if (avg < 89) {
-       inputs.prompt = 'a family friendly artistic image of ' + prompt;
-       bytes = await aiRunBytes(imageModel,inputs);
-       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-    }
-
-    if (avg < 89) {
-      inputs.prompt= prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' ');
-      bytes = await aiRunBytes(imageModel,inputs);
-      avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-    }
-
-   if (avg < 89) {
-      inputs.prompt= 'a family friendly artistic image of ' + inputs.prompt;
-      bytes = await aiRunBytes(imageModel,inputs);
-    }
-
-    promptCache[prompt] = [...bytes];
-    return new Response(bytes, {
+  const reqURL = new URL(request.url);
+  const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
+  if (promptCache[prompt]) {
+    return new Response(new Uint8Array(promptCache[prompt]), {
       headers: {
-        "access-control-allow-origin": "*",
         "content-type": "image/jpg",
+        "access-control-allow-origin": "*",
         ...cacheHeaders
       },
     });
+  }
+
+  let inputs = {
+    prompt,
+    ...imgDefaults
+  };
+
+  let bytes = await aiRunBytes(imageModel, inputs);
+  let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+
+  if (avg < 89) {
+    inputs.prompt = 'a family friendly artistic image of ' + prompt;
+    bytes = await aiRunBytes(imageModel, inputs);
+    avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+  }
+
+  if (avg < 89) {
+    inputs.prompt = prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' ');
+    bytes = await aiRunBytes(imageModel, inputs);
+    avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+  }
+
+  if (avg < 89) {
+    inputs.prompt = 'a family friendly artistic image of ' + inputs.prompt;
+    bytes = await aiRunBytes(imageModel, inputs);
+  }
+
+  promptCache[prompt] = [...bytes];
+  return new Response(bytes, {
+    headers: {
+      "access-control-allow-origin": "*",
+      "content-type": "image/jpg",
+      ...cacheHeaders
+    },
+  });
 }
