@@ -44,13 +44,13 @@ const imgDefaults ={num_steps:4};
     }
 
     if (avg < 89) {
-      inputs.prompt: prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' ');
+      inputs.prompt= prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' ');
       bytes = await aiRunBytes(imageModel,inputs);
       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }
 
    if (avg < 89) {
-      inputs.prompt: 'a family friendly artistic image of ' + input.prompt;
+      inputs.prompt= 'a family friendly artistic image of ' + input.prompt;
       bytes = await aiRunBytes(imageModel,inputs);
      // avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }
