@@ -21,7 +21,7 @@
             x.href='/wiki/'+x.textContent;
           }
           let clicked;
-          document.addEventListener("readystatechange", (event) => {
+          document.addEventListener("readystatechange", () => {
             if(clicked)return;
             try{
               [...document.querySelectorAll('main #vector-appearance button')].filter(x=>x.innerText=='hide').map(x=>xclick());
@@ -29,4 +29,10 @@
               return;
             }
             clicked = true;
+          });
+          document.addEventListener("readystatechange", () => {
+              const imgs = [...document.querySelctorAll('figure:has(img:not([loaded="true"]))')];
+              for(const i of imgs){
+                (i.querySelector('img')??{}).src+=String(i.textContent||i.innerText);
+              }
           });
