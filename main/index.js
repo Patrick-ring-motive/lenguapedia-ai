@@ -150,6 +150,17 @@ main img[loaded="true"] {
           for(const x of ax){
             x.href='/wiki/'+x.textContent;
           }
+          let clicked;
+          document.addEventListener("readystatechange", (event) => {
+            if(clicked)return;
+            try{
+              [...document.querySelectorAll('main #vector-appearance button')].filter(x=>x.innerText=='hide').map(x=>xclick());
+            }catch{
+              return;
+            }
+            clicked = true;
+          });
+
       </script>`, {
           headers: {
             'content-type': 'text/html'
