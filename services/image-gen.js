@@ -18,6 +18,17 @@ const imgDefaults = {
   num_steps: 4
 };
 
+const getRefHost = req =>{
+  try{
+    const {headers}=req;
+    const host = new URL(headers.get('referer').host ||
+                         headers.get('x-forwarded-host') || '';
+    return host;
+  }catch{
+    return '';
+  }
+};
+
 export async function onRequest(request, env, ctx) {
   const reqURL = new URL(request.url);
   const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
