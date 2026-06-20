@@ -67,7 +67,7 @@ export async function onRequest(request, env, ctx) {
       return new Response(articles[0].split(/<main[^>]+>/)[0].replace(/<title.+<\/title>/, `<title>${urlparts[4]} ${urlparts[5]}</title>`) +
         '<main>' +
         merger(art1, art2)
-        .replaceAll(RegExp(`(^|\\b)${decodeURIComponent(urlparts[4]).replaceAll('_',' ')}`, "gi"), `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' '))
+        .replaceAll(RegExp(`${decodeURIComponent(urlparts[4]).replaceAll('_',' ')}`, "gi"), `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' '))
         // .replaceAll(urlparts[4].toLowerCase(),`${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.toLowerCase().replaceAll('_',' '))
         .replaceAll(/<img [^>]*src?="[^"]+"/g, x => {
           const url = new URL('https://image-gen.lenguapedia-services.workers.dev/');
