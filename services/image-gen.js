@@ -5,8 +5,8 @@ for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cach
 }
 const promptCache = {};
 
-export default {
-  async fetch(request, env, ctx) {
+
+ export async function onRequest(request, env, ctx) {
     const reqURL = new URL(request.url);
     const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
     if (promptCache[prompt]) {
@@ -71,5 +71,4 @@ export default {
         ...cacheHeaders
       },
     });
-  },
 }
