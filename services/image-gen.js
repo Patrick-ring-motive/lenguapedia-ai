@@ -1,10 +1,19 @@
-let imageModel = "@cf/bytedance/stable-diffusion-xl-lightning";
+let imageModel = env.IMAGE_MODEL;
 const cacheHeaders = {};
 const seconds = 31535000;
 for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cache-Control", "Surrogate-Control", "Vercel-CDN-Cache-Control"]) {
   cacheHeaders[header] = `public, max-age=${seconds}, s-max-age=${seconds}, stale-if-error=31535000, stale-while-revalidate=31535000`;
 }
 const promptCache = {};
+
+const aiRunBytes = async(...args) =>{
+  const stream = await env.AI.run(...args);
+  const resStream = new Response(stream);
+  const bytes = await resStream.bytes();
+  return bytes;
+};
+
+const imgDefaults ={num_steps:4};
 
 
  export async function onRequest(request, env, ctx) {
@@ -22,46 +31,28 @@ const promptCache = {};
 
     let inputs = {
       prompt,
-      num_steps: 4
+      ...imgDefaults
     };
 
-    let stream = await env.AI.run(
-      imageModel,
-      inputs
-    );
-
-    let resStream = new Response(stream);
-
-    let bytes = await resStream.bytes();
+    let bytes = await aiRunBytes(imageModel,inputs);
     let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
 
     if (avg < 89) {
-      inputs = {
-        prompt: 'a family friendly artistic image of ' + prompt,
-        num_steps: 4
-      };
-      stream = await env.AI.run(
-        imageModel,
-        inputs
-      );
-
-      resStream = new Response(stream);
-
-      bytes = await resStream.bytes();
+       inputs.prompt = 'a family friendly artistic image of ' + prompt;
+       bytes = await aiRunBytes(imageModel,inputs);
+       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }
-    avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
 
     if (avg < 89) {
-      inputs = {
-        prompt: 'a family friendly artistic image of ' + prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' '),
-        num_steps: 4
-      };
-      stream = await env.AI.run(
-        imageModel,
-        inputs
-      );
-      resStream = new Response(stream);
-      bytes = await resStream.bytes();
+      inputs.prompt: prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' ');
+      bytes = await aiRunBytes(imageModel,inputs);
+      avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+    }
+
+   if (avg < 89) {
+      inputs.prompt: 'a family friendly artistic image of ' + input.prompt;
+      bytes = await aiRunBytes(imageModel,inputs);
+     // avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }
 
     promptCache[prompt] = [...bytes];
