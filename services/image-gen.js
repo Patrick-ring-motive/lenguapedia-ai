@@ -53,7 +53,6 @@ const imgDefaults ={num_steps:4};
    if (avg < 89) {
       inputs.prompt= 'a family friendly artistic image of ' + input.prompt;
       bytes = await aiRunBytes(imageModel,inputs);
-     // avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }
 
     promptCache[prompt] = [...bytes];
