@@ -120,6 +120,7 @@ main img[loaded="true"] {
     transform: rotate(360deg);
   }
 }
+img[srcset]{display:none;}
       </style>
       <script>
       [...document.querySelectorAll('img[src][srcset]')].forEach(x=>x.removeAttribute('srcset'));
@@ -151,7 +152,7 @@ main img[loaded="true"] {
             x.href='/wiki/'+x.textContent;
           }
           let clicked;
-          document.addEventListener("readystatechange", (event) => {
+          document.addEventListener("readystatechange", () => {
             if(clicked)return;
             try{
               [...document.querySelectorAll('main #vector-appearance button')].filter(x=>x.innerText=='hide').map(x=>xclick());
@@ -159,6 +160,12 @@ main img[loaded="true"] {
               return;
             }
             clicked = true;
+          });
+          document.addEventListener("readystatechange", () => {
+              const imgs = [...document.querySelctorAll('figure:has(img:not([loaded="true"]))')];
+              for(const i of imgs){
+                (i.querySelector('img')??{}).src='https://image-gen.lenguapedia-services.workers.dev?prompt='+String(i.textContent||i.innerText);
+              }
           });
 
       </script>`, {
