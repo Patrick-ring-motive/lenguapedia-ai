@@ -14,9 +14,9 @@ const fetchText = async(...args)=>{
   }
 }
 
-const onRequestText = async(...args)=>{
+const onLengRequestText = async(...args)=>{
   try{
-    return await(await onRequest(new Request(...args))).text();
+    return await(await onLengRequest(new Request(...args))).text();
   }catch(e){
     return String(e);
   }
@@ -47,14 +47,13 @@ function merger(article1,article2){
   return article1;
 }
 
-export default {
-  async fetch(request, env, ctx) {
+export async function onRequest(request, env, ctx) {
     try{
     const urlparts = request.url.split('/');
     if(urlparts[3]==='merge'){
       const articles = await Promise.all([
-        onRequestText(`https://en.wikipedia.org/wiki/${urlparts[4]}`,{headers:request.headers}),
-        onRequestText(`https://en.wikipedia.org/wiki/${urlparts[5]}`,{headers:request.headers})
+        onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[4]}`,{headers:request.headers}),
+        onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[5]}`,{headers:request.headers})
       ]);
       let art1 = articles[0].split(/<main[^>]+>/)[1].split('</main>')[0];
       let art2 = articles[1].split(/<main[^>]+>/)[1].split('</main>')[0];
@@ -146,7 +145,7 @@ main img[loaded="true"] {
           }
       </script>`,{headers:{'content-type':'text/html'}});
     }
-    let regres = await onRequest(request,env,ctx);
+    let regres = await onLengRequest(request,env,ctx);
     if(regres.status >= 400){
       try{
       const loc = new URL(request.url).origin + '/merge/'+(await getTop2WikipediaTitles(String(request.url.split('wiki')[1]))).join('/');
@@ -159,10 +158,9 @@ main img[loaded="true"] {
   }catch(e){
     return new Response(String(e),{status:500,statusText:String(e)});
   }
-  }
 };
 
-async function onRequest(request, env, ctx) {
+async function onLengRequest(request, env, ctx) {
     const url = new URL(request.url);
     const reqHost = url.host;
     let res,req;
