@@ -31,7 +31,7 @@
             clicked = true;
           });
           document.addEventListener("readystatechange", () => {
-              const imgs = [...document.querySelctorAll('figure:has(img:not([loaded="true"]))')];
+              const imgs = [...document.querySelectorAll('figure:has(img:not([loaded="true"]))')];
               for(const i of imgs){
                 (i.querySelector('img')??{}).src+=String(i.textContent||i.innerText);
               }
