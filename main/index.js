@@ -54,9 +54,6 @@ const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const title1 = decodeURIComponent(urlparts[4]).replaceAll('_', ' ');
 const combined = `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' ');
 
-
-
-
 export async function onRequest(request, env, ctx) {
   try {
     const urlparts = request.url.split('/');
@@ -73,8 +70,8 @@ export async function onRequest(request, env, ctx) {
       let art2 = articles[1].split(/<main[^>]+>/)[1].split('</main>')[0];
       return new Response(articles[0].split(/<main[^>]+>/)[0].replace(/<title.+<\/title>/, `<title>${urlparts[4]} ${urlparts[5]}</title>`) +
         '<main>' +
-      merger(art1, art2)
-  .replaceAll(new RegExp(`\\b${escapeRegExp(title1)}\\b`, 'gi'), () => combined)    // .replaceAll(urlparts[4].toLowerCase(),`${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.toLowerCase().replaceAll('_',' '))
+        merger(art1, art2)
+        .replaceAll(new RegExp(`\\b${escapeRegExp(title1)}\\b`, 'gi'), () => combined) // .replaceAll(urlparts[4].toLowerCase(),`${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.toLowerCase().replaceAll('_',' '))
         .replaceAll(/<img [^>]*src?="[^"]+"/g, x => {
           const url = new URL('https://image-gen.lenguapedia-services.workers.dev/');
           const txt = x.replace(/[^a-zA-Z0-9]/g, ' ');
