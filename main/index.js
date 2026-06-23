@@ -1,3 +1,25 @@
+const contentScripts = `<script>
+        globalThis.env ??= {};
+        env.hostTargets ??= ${JSON.stringify(hostTargets)} || [];
+        env.mode ??= ${env.mode} || 'DEV';
+        globalThis.importScript = async(url)=>{
+          try{
+            if(env.mode === 'DEV'){
+              const u = new URL(url);
+              u.searchParams.set('cachebust',new Date().getTime());
+              url = String(u);
+            }
+            const i = await import(url);
+            return i || true;
+          }catch{
+            return false;
+          }
+        };
+        </script>
+        <script>
+        importScript('https://patrick-ring-motive.github.io/lenguapedia-ai/frontend/rewrites.js');
+        </script>`;
+
 const fetchResponse = async (...args) => {
   try {
     return await fetch(...args);
@@ -131,27 +153,7 @@ img[srcset]{display:none;}
       
       </script>` +
         articles[0].split('</main>')[1] +
-        `<script>
-        globalThis.env ??= {};
-        env.hostTargets ??= ${JSON.stringify(hostTargets)} || [];
-        env.mode ??= ${env.mode} || 'DEV';
-        globalThis.importScript = async(url)=>{
-          try{
-            if(env.mode === 'DEV'){
-              const u = new URL(url);
-              u.searchParams.set('cachebust',new Date().getTime());
-              url = String(u);
-            }
-            const i = await import(url);
-            return i || true;
-          }catch{
-            return false;
-          }
-        };
-        </script>
-        <script>
-        importScript('https://patrick-ring-motive.github.io/lenguapedia-ai/frontend/rewrites.js');
-        </script>`, {
+contentScripts, {
           headers: {
             'content-type': 'text/html'
           }
@@ -211,6 +213,9 @@ async function onLengRequest(request, env, ctx) {
       try {
         body = JSON.stringify(JSON.parse(body), null, 2);
       } catch {}
+    }
+    if(/html/i.test(res.headers.get('content-type'))) {
+      body += contentScripts;
     }
   }
   return new Response(body, res);
