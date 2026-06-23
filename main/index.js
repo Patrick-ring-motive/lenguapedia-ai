@@ -131,77 +131,27 @@ img[srcset]{display:none;}
       
       </script>` +
         articles[0].split('</main>')[1] +
-        `<script>globalThis.hostTargets = ${JSON.stringify(hostTargets)};</script>
-        <script>
-      const updateAttribute = (el,k,v)=>{
-        try{
-          const val = el.getAttribute(k);
-          if(val != v){
-            el.setAttribute(k,v);
-          }
-        }catch(e){
-          console.warn(e,el,k,v);
-        } 
-      };
-      const hostTargets = ${JSON.stringify(hostTargets)};
-      for(const host of hostTargets){
-        [...document.querySelectorAll('a[href]')].forEach(x=>updateAttribute(x,'href',x.href.replace(host,location.host)));
-      }
-        const ie = [...document.querySelectorAll('img')];
-        for(const i of ie){
-          i.onerror =(()=>{ i.src='https://image-gen.lenguapedia-services.workers.dev?prompt='+String(i.outerHTML);});
-        }
-          const ax = [...document.querySelectorAll('main a[href]')];
-          for(const x of ax){
-            x.href='/wiki/'+x.textContent;
-          }
-          let clicked;
-          document.addEventListener("readystatechange", () => {
-            if(clicked)return;
-            try{
-              [...document.querySelectorAll('main #vector-appearance button')].filter(x=>x.innerText=='hide').map(x=>x.click());
-            }catch{
-              return;
+        `<script>
+        globalThis.env ??= {};
+        env.hostTargets ??= ${JSON.stringify(hostTargets)} || [];
+        env.mode ??= ${env.mode} || 'DEV';
+        globalThis.importScript = async(url)=>{
+          try{
+            if(env.mode === 'DEV'){
+              const u = new URL(url);
+              u.searchParams.set('cachebust',new Date().getTime());
+              url = String(u);
             }
-            clicked = true;
-          });
-          document.addEventListener("readystatechange", () => {
-              let node, walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-      while (node = walk.nextNode()) {
-        if (node.parentElement.tagName == 'SCRIPT') {
-          continue;
-        }
-        if (node.parentElement.tagName == 'STYLE') {
-          continue;
-        }
-        let nodeText = node.textContent;
-        nodeText = nodeText.replaceAll(/wikipedia/gi,'Lenguapedia');
-        if (nodeText != node.textContent) {
-          node.textContent = nodeText;
-        }
-
-      }
-              const imgs = [...document.querySelectorAll('figure:has(img:not([loaded="true"]))')];
-              for(const i of imgs){
-                (i.querySelector('img')??{}).src+=String(i.textContent||i.innerText);
-              }
-          });
-let node, walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-      while (node = walk.nextNode()) {
-        if (node.parentElement.tagName == 'SCRIPT') {
-          continue;
-        }
-        if (node.parentElement.tagName == 'STYLE') {
-          continue;
-        }
-        let nodeText = node.textContent||node.innerText;
-        nodeText = nodeText?.replaceAll?.(/wikipedia/gi,'Lenguapedia');
-        if (nodeText) {
-          node.textContent = nodeText;
-        }
-
-      }
-      </script>`, {
+            const i = await import(url);
+            return i || true;
+          }catch{
+            return false;
+          }
+        };
+        </script>
+        <script>
+        importScript('https://patrick-ring-motive.github.io/lenguapedia-ai/frontend/rewrites.js');
+        </script>`, {
           headers: {
             'content-type': 'text/html'
           }
