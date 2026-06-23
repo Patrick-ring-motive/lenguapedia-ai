@@ -1,4 +1,6 @@
- const updateAttribute = (el,k,v)=>{
+globalThis.hostTargets ??=[];
+
+const updateAttribute = (el,k,v)=>{
         try{
           const val = el.getAttribute(k);
           if(val != v){
