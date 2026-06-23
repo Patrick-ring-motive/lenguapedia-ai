@@ -54,7 +54,7 @@ const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const title1 = decodeURIComponent(urlparts[4]).replaceAll('_', ' ');
 const combined = `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' ');
 
-export async function onRequest(request, env, ctx) {
+globalThis.onRequest = async function onRequest(request, env, ctx) {
   try {
     const urlparts = request.url.split('/');
     if (urlparts[3] === 'merge') {
