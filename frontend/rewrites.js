@@ -1,4 +1,5 @@
-globalThis.hostTargets ??= [];
+globalThis.env ??= {};
+env.hostTargets ??= [];
 
 
 
@@ -32,7 +33,7 @@ const swapWiki = () => {
     }
 };
 
-for (const host of hostTargets) {
+for (const host of env.hostTargets) {
     [...document.querySelectorAll('a[href]')].forEach(x => updateAttribute(x, 'href', x.href.replace(host, location.host)));
 }
 const ie = [...document.querySelectorAll('img')];
