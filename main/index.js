@@ -71,7 +71,7 @@ globalThis.onRequest = async (request, env, ctx)=> {
       return new Response(articles[0].split(/<main[^>]+>/)[0].replace(/<title.+<\/title>/, `<title>${urlparts[4]} ${urlparts[5]}</title>`) +
         '<main>' +
         merger(art1, art2)
-        .replaceAll(new RegExp(`\\b${escapeRegExp(title1)}\\b`, 'gi'), () => combined) 
+        .replaceAll(new RegExp(`([^a-zA-Z]|^)${escapeRegExp(title1)}([^a-zA-Z]|$)`, 'gi'), `$1${combined}$2`) 
         .replaceAll(/<img [^>]*src?="[^"]+"/g, x => {
           const url = new URL('https://image-gen.lenguapedia-services.workers.dev/');
           const txt = x.replace(/[^a-zA-Z0-9]/g, ' ');
