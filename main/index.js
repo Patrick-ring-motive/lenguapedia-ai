@@ -200,6 +200,8 @@ img[srcset]{display:none;}
   }
 };
 
+export const onRequest = globalThis.onRequest;
+
 async function onLengRequest(request, env, ctx) {
   const url = new URL(request.url);
   const reqHost = url.host;
