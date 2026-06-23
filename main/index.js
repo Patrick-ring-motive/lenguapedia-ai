@@ -195,8 +195,8 @@ let node, walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, 
           continue;
         }
         let nodeText = node.textContent;
-        nodeText = nodeText.replaceAll(/wikipedia/gi,'Lenguapedia');
-        if (nodeText != node.textContent) {
+        nodeText = nodeText?.replaceAll?.(/wikipedia/gi,'Lenguapedia');
+        if (nodeText) {
           node.textContent = nodeText;
         }
 
