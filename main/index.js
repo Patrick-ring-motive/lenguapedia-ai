@@ -182,10 +182,13 @@ xxmain img{width:100%;max-width:100vh;min-height:100% !important;}
 
 .img-wrap{border:none !important;}
 
+
+.mw-logo-wordmark,
 main img {
   opacity: 0;
   transition: opacity 0.2s;
 }
+
 
 main img[loaded="true"] {
   opacity: 1;
