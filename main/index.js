@@ -186,7 +186,21 @@ img[srcset]{display:none;}
                 (i.querySelector('img')??{}).src+=String(i.textContent||i.innerText);
               }
           });
+let node, walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+      while (node = walk.nextNode()) {
+        if (node.parentElement.tagName == 'SCRIPT') {
+          continue;
+        }
+        if (node.parentElement.tagName == 'STYLE') {
+          continue;
+        }
+        let nodeText = node.textContent;
+        nodeText = nodeText.replaceAll(/wikipedia/gi,'Lenguapedia');
+        if (nodeText != node.textContent) {
+          node.textContent = nodeText;
+        }
 
+      }
       </script>`, {
           headers: {
             'content-type': 'text/html'
