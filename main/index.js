@@ -4,6 +4,10 @@ const hostTargets = [
   "en.wiktionary.org",
 ];
 
+if(typeof env === "undefined"){
+    globalThis.env = {};
+}
+
 const contentScripts = `<script>
         globalThis.env ??= {};
         env.hostTargets ??= ${JSON.stringify(hostTargets)} || [];
@@ -118,8 +122,8 @@ globalThis.onRequest = async (request, env, ctx) => {
           headers: request.headers,
         }),
       ]);
-      let art1 = articles[0].split(/<main[^>]+>/)[1].split("</main>")[0];
-      let art2 = articles[1].split(/<main[^>]+>/)[1].split("</main>")[0];
+      let art1 = articles[0]?.split?.(/<main[^>]+>/)?.[1]?.split?.("</main>")?.[0] || articles[0];
+      let art2 = articles[1]?.split?.(/<main[^>]+>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
       return new Response(
         articles[0]
           .split(/<main[^>]+>/)[0]
@@ -257,22 +261,22 @@ async function onLengRequest(request, env, ctx) {
       break;
     }
   }
-  let body = res.body;
   if (/script|text|json|html|xml/i.test(res.headers.get("content-type"))) {
-    body = await res.text();
+    let bodyText = await res.text();
     for (const host of hostTargets) {
-      body = body.replaceAll(host, reqHost);
+      bodyText = bodyText.replaceAll(host, reqHost);
     }
     if (/json/i.test(res.headers.get("content-type"))) {
       try {
-        body = JSON.stringify(JSON.parse(body), null, 2);
+        bodyText = JSON.stringify(JSON.parse(bodyText), null, 2);
       } catch {}
     }
     if (/html/i.test(res.headers.get("content-type"))) {
-      body += contentScripts;
+      bodyText += contentScripts;
     }
+    res = new Response(bodyText, res);
   }
-  return new Response(body, res);
+  return res;
 }
 
 async function getTop2WikipediaTitles(query) {
