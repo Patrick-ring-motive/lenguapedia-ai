@@ -1,7 +1,7 @@
 const contentScripts = `<script>
         globalThis.env ??= {};
         env.hostTargets ??= ${JSON.stringify(hostTargets)} || [];
-        env.mode ??= ${env.mode} || 'DEV';
+        env.mode ??= "${env.mode}" || 'DEV';
         globalThis.importScript = async(url)=>{
           try{
             if(env.mode === 'DEV'){
