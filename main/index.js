@@ -131,7 +131,8 @@ img[srcset]{display:none;}
       
       </script>` +
         articles[0].split('</main>')[1] +
-        `<script>
+        `<script>globalThis.hostTargets = ${JSON.stringify(hostTargets)};</script>
+        <script>
       const updateAttribute = (el,k,v)=>{
         try{
           const val = el.getAttribute(k);
