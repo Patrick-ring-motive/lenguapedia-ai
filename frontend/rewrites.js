@@ -50,7 +50,11 @@ let clicked;
 document.addEventListener("readystatechange", () => {
     if (clicked) return;
     try {
-        [...document.querySelectorAll('main #vector-appearance button')].filter(x => x.innerText == 'hide').map(x => x.click());
+        const btns = [...document.querySelectorAll('main #vector-appearance button')].filter(x => x.innerText == 'hide');
+        if(!btns.length){
+            return;
+        }
+        btns.map(x => x.click());
     } catch {
         return;
     }
