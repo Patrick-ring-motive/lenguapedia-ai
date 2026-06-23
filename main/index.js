@@ -48,15 +48,15 @@ function merger(article1, article2) {
     });
   }
   return article1;
-}
+};
 
 const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const title1 = decodeURIComponent(urlparts[4]).replaceAll('_', ' ');
-const combined = `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' ');
 
 globalThis.onRequest = async (request, env, ctx)=> {
   try {
     const urlparts = request.url.split('/');
+    const title1 = decodeURIComponent(urlparts[4]).replaceAll('_', ' ');
+    const combined = `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' ');
     if (urlparts[3] === 'merge') {
       const articles = await Promise.all([
         onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[4]}`, {
@@ -158,7 +158,7 @@ img[srcset]{display:none;}
           document.addEventListener("readystatechange", () => {
             if(clicked)return;
             try{
-              [...document.querySelectorAll('main #vector-appearance button')].filter(x=>x.innerText=='hide').map(x=>xclick());
+              [...document.querySelectorAll('main #vector-appearance button')].filter(x=>x.innerText=='hide').map(x=>x.click());
             }catch{
               return;
             }
