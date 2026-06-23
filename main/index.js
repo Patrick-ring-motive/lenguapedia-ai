@@ -1,3 +1,9 @@
+const hostTargets = [
+  "en.wikipedia.org",
+  "www.wikidata.org",
+  "en.wiktionary.org",
+];
+
 const contentScripts = `<script>
         globalThis.env ??= {};
         env.hostTargets ??= ${JSON.stringify(hostTargets)} || [];
@@ -26,7 +32,7 @@ const fetchResponse = async (...args) => {
   } catch (e) {
     return new Response(String(e), {
       status: 500,
-      statusText: String(e)
+      statusText: String(e),
     });
   }
 };
@@ -37,7 +43,7 @@ const fetchText = async (...args) => {
   } catch (e) {
     return String(e);
   }
-}
+};
 
 const onLengRequestText = async (...args) => {
   try {
@@ -45,63 +51,104 @@ const onLengRequestText = async (...args) => {
   } catch (e) {
     return String(e);
   }
-}
-
-const hostTargets = [
-  'en.wikipedia.org',
-  'www.wikidata.org',
-  'en.wiktionary.org'
-];
-
-function merger(article1, article2) {
-  const replacers = ['the', 'a', 'an', 'and', 'of', 'to', 'in', 'as', 'has', 'is', 'it', 'for', 'on', 'was', 'are'];
-  const rex = replacers.map(x => RegExp(`\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`, "g"));
-  for (const r of rex) {
-    const matches = (String(article2).replace(/\n/g, ' ').match(r) || []).filter(x => !['a href', 'a rel'].includes(x) && !replacers.some(y => x.endsWith(' ' + y)));
-    let i = 0;
-    if (!matches.length) continue;
-    article1 = String(article1).replace(/\n/g, ' ').replaceAll(r, x => {
-      if (!/ (href|rel)$/.test(x)) {
-        x = matches[i];
-      }
-      i++;
-      i = i % matches.length;
-      return x;
-    });
-  }
-  return article1;
 };
 
-const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function merger(article1, article2) {
+  const replacers = [
+    "the",
+    "a",
+    "an",
+    "and",
+    "of",
+    "to",
+    "in",
+    "as",
+    "has",
+    "is",
+    "it",
+    "for",
+    "on",
+    "was",
+    "are",
+  ];
+  const rex = replacers.map((x) =>
+    RegExp(`\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`, "g"),
+  );
+  for (const r of rex) {
+    const matches = (
+      String(article2).replace(/\n/g, " ").match(r) || []
+    ).filter(
+      (x) =>
+        !["a href", "a rel"].includes(x) &&
+        !replacers.some((y) => x.endsWith(" " + y)),
+    );
+    let i = 0;
+    if (!matches.length) continue;
+    article1 = String(article1)
+      .replace(/\n/g, " ")
+      .replaceAll(r, (x) => {
+        if (!/ (href|rel)$/.test(x)) {
+          x = matches[i];
+        }
+        i++;
+        i = i % matches.length;
+        return x;
+      });
+  }
+  return article1;
+}
 
-globalThis.onRequest = async (request, env, ctx)=> {
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+globalThis.onRequest = async (request, env, ctx) => {
   try {
-    const urlparts = request.url.split('/');
-    const title1 = decodeURIComponent(urlparts[4]).replaceAll('_', ' ');
-    const combined = `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll('_', ' ');
-    if (urlparts[3] === 'merge') {
+    const urlparts = request.url.split("/");
+    const title1 = decodeURIComponent(urlparts[4]).replaceAll("_", " ");
+    const combined =
+      `${decodeURIComponent(urlparts[4])} ${decodeURIComponent(urlparts[5])}`.replaceAll(
+        "_",
+        " ",
+      );
+    if (urlparts[3] === "merge") {
       const articles = await Promise.all([
         onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[4]}`, {
-          headers: request.headers
+          headers: request.headers,
         }),
         onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[5]}`, {
-          headers: request.headers
-        })
+          headers: request.headers,
+        }),
       ]);
-      let art1 = articles[0].split(/<main[^>]+>/)[1].split('</main>')[0];
-      let art2 = articles[1].split(/<main[^>]+>/)[1].split('</main>')[0];
-      return new Response(articles[0].split(/<main[^>]+>/)[0].replace(/<title.+<\/title>/, `<title>${urlparts[4]} ${urlparts[5]}</title>`) +
-        '<main>' +
-        merger(art1, art2)
-        .replaceAll(new RegExp(`([^a-zA-Z]|^)${escapeRegExp(title1)}([^a-zA-Z]|$)`, 'gi'), `$1${combined}$2`) 
-        .replaceAll(/<img [^>]*src?="[^"]+"/g, x => {
-          const url = new URL('https://image-gen.lenguapedia-services.workers.dev/');
-          const txt = x.replace(/[^a-zA-Z0-9]/g, ' ');
-          url.searchParams.set('prompt', `${urlparts[5]} ${urlparts[5]} ${urlparts[4]}${urlparts[5]} ${txt}`);
-          return (`<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`);
-        }) +
-        '</main>' +
-        `<style>
+      let art1 = articles[0].split(/<main[^>]+>/)[1].split("</main>")[0];
+      let art2 = articles[1].split(/<main[^>]+>/)[1].split("</main>")[0];
+      return new Response(
+        articles[0]
+          .split(/<main[^>]+>/)[0]
+          .replace(
+            /<title.+<\/title>/,
+            `<title>${urlparts[4]} ${urlparts[5]}</title>`,
+          ) +
+          "<main>" +
+          merger(art1, art2)
+            .replaceAll(
+              new RegExp(
+                `([^a-zA-Z]|^)${escapeRegExp(title1)}([^a-zA-Z]|$)`,
+                "gi",
+              ),
+              `$1${combined}$2`,
+            )
+            .replaceAll(/<img [^>]*src?="[^"]+"/g, (x) => {
+              const url = new URL(
+                "https://image-gen.lenguapedia-services.workers.dev/",
+              );
+              const txt = x.replace(/[^a-zA-Z0-9]/g, " ");
+              url.searchParams.set(
+                "prompt",
+                `${urlparts[5]} ${urlparts[5]} ${urlparts[4]}${urlparts[5]} ${txt}`,
+              );
+              return `<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`;
+            }) +
+          "</main>" +
+          `<style>
       nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
       img[src][srcset]{display:none;}
       .img-wrap {
@@ -152,22 +199,29 @@ img[srcset]{display:none;}
       [...document.querySelectorAll('img[slop]')].forEach(x=>x.parentElement.classList.add('img-wrap'));
       
       </script>` +
-        articles[0].split('</main>')[1] +
-contentScripts, {
+          articles[0].split("</main>")[1] +
+          contentScripts,
+        {
           headers: {
-            'content-type': 'text/html'
-          }
-        });
+            "content-type": "text/html",
+          },
+        },
+      );
     }
     let regres = await onLengRequest(request, env, ctx);
     if (regres.status >= 400) {
       try {
-        const loc = new URL(request.url).origin + '/merge/' + (await getTop2WikipediaTitles(String(request.url.split('wiki')[1]))).join('/');
+        const loc =
+          new URL(request.url).origin +
+          "/merge/" +
+          (
+            await getTop2WikipediaTitles(String(request.url.split("wiki")[1]))
+          ).join("/");
         return new Response(null, {
           status: 302,
           headers: {
-            location: loc
-          }
+            location: loc,
+          },
         });
       } catch (e) {
         console.warn(e, request.url);
@@ -177,7 +231,7 @@ contentScripts, {
   } catch (e) {
     return new Response(String(e), {
       status: 500,
-      statusText: String(e)
+      statusText: String(e),
     });
   }
 };
@@ -192,29 +246,29 @@ async function onLengRequest(request, env, ctx) {
     url.host = host;
     const reqInit = {
       method: request.method,
-      headers: request.headers
+      headers: request.headers,
     };
     if (request.body) {
       reqInit.body = request.body;
     }
-    req = new Request(String(url), reqInit)
+    req = new Request(String(url), reqInit);
     res = await fetchResponse(req);
     if (/^[23]/.test(res.status)) {
       break;
     }
   }
   let body = res.body;
-  if (/script|text|json|html|xml/i.test(res.headers.get('content-type'))) {
+  if (/script|text|json|html|xml/i.test(res.headers.get("content-type"))) {
     body = await res.text();
     for (const host of hostTargets) {
       body = body.replaceAll(host, reqHost);
     }
-    if (/json/i.test(res.headers.get('content-type'))) {
+    if (/json/i.test(res.headers.get("content-type"))) {
       try {
         body = JSON.stringify(JSON.parse(body), null, 2);
       } catch {}
     }
-    if(/html/i.test(res.headers.get('content-type'))) {
+    if (/html/i.test(res.headers.get("content-type"))) {
       body += contentScripts;
     }
   }
@@ -222,15 +276,16 @@ async function onLengRequest(request, env, ctx) {
 }
 
 async function getTop2WikipediaTitles(query) {
-  query = decodeURIComponent(String(query)).replaceAll(/[^a-zA-Z]/g, ' ');
+  query = decodeURIComponent(String(query)).replaceAll(/[^a-zA-Z]/g, " ");
   const res = await fetch(
-    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srlimit=2&format=json&origin=*`, {
+    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srlimit=2&format=json&origin=*`,
+    {
       headers: {
-        'user-agent': 'lenguapedia'
-      }
-    }
+        "user-agent": "lenguapedia",
+      },
+    },
   );
 
   const data = await res.json();
-  return (data.query?.search || []).map(result => result.title);
+  return (data.query?.search || []).map((result) => result.title);
 }
