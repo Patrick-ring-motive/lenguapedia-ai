@@ -4,8 +4,8 @@ const hostTargets = [
   "en.wiktionary.org",
 ];
 
-if(typeof env === "undefined"){
-    globalThis.env = {};
+if (typeof env === "undefined") {
+  globalThis.env = {};
 }
 
 const contentScripts = `<script>
@@ -83,8 +83,8 @@ function merger(article1, article2) {
       String(article2).replace(/\n/g, " ").match(r) || []
     ).filter(
       (x) =>
-        !["a href", "a rel"].includes(x) &&
-        !replacers.some((y) => x.endsWith(" " + y)),
+      !["a href", "a rel"].includes(x) &&
+      !replacers.some((y) => x.endsWith(" " + y)),
     );
     let i = 0;
     if (!matches.length) continue;
@@ -126,33 +126,33 @@ globalThis.onRequest = async (request, env, ctx) => {
       let art2 = articles[1]?.split?.(/<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
       return new Response(
         articles[0]
-          .split(/<main[^>]+>/)[0]
-          .replace(
-            /<title.+<\/title>/,
-            `<title>${urlparts[4]} ${urlparts[5]}</title>`,
-          ) +
-          "<main>" +
-          merger(art1, art2)
-            .replaceAll(
-              new RegExp(
-                `([^a-zA-Z]|^)${escapeRegExp(title1)}([^a-zA-Z]|$)`,
-                "gi",
-              ),
-              `$1${combined}$2`,
-            )
-            .replaceAll(/<img [^>]*src?="[^"]+"/g, (x) => {
-              const url = new URL(
-                "https://image-gen.lenguapedia-services.workers.dev/",
-              );
-              const txt = x.replace(/[^a-zA-Z0-9]/g, " ");
-              url.searchParams.set(
-                "prompt",
-                `${urlparts[5]} ${urlparts[5]} ${urlparts[4]}${urlparts[5]} ${txt}`,
-              );
-              return `<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`;
-            }) +
-          "</main>" +
-          `<style>
+        .split(/<main[^>]+>/)[0]
+        .replace(
+          /<title.+<\/title>/,
+          `<title>${urlparts[4]} ${urlparts[5]}</title>`,
+        ) +
+        "<main>" +
+        merger(art1, art2)
+        .replaceAll(
+          new RegExp(
+            `([^a-zA-Z]|^)${escapeRegExp(title1)}([^a-zA-Z]|$)`,
+            "gi",
+          ),
+          `$1${combined}$2`,
+        )
+        .replaceAll(/<img [^>]*src?="[^"]+"/g, (x) => {
+          const url = new URL(
+            "https://image-gen.lenguapedia-services.workers.dev/",
+          );
+          const txt = x.replace(/[^a-zA-Z0-9]/g, " ");
+          url.searchParams.set(
+            "prompt",
+            `${urlparts[5]} ${urlparts[5]} ${urlparts[4]}${urlparts[5]} ${txt}`,
+          );
+          return `<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`;
+        }) +
+        "</main>" +
+        `<style>
       nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
       img[src][srcset]{display:none;}
       .img-wrap {
@@ -206,9 +206,8 @@ img[srcset]{display:none;}
       [...document.querySelectorAll('img[slop]')].forEach(x=>x.parentElement.classList.add('img-wrap'));
       
       </script>` +
-          articles[0].split("</main>")[1] +
-          contentScripts,
-        {
+        articles[0].split("</main>")[1] +
+        contentScripts, {
           headers: {
             "content-type": "text/html",
           },
@@ -285,8 +284,7 @@ async function onLengRequest(request, env, ctx) {
 async function getTop2WikipediaTitles(query) {
   query = decodeURIComponent(String(query)).replaceAll(/[^a-zA-Z]/g, " ");
   const res = await fetch(
-    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srlimit=2&format=json&origin=*`,
-    {
+    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srlimit=2&format=json&origin=*`, {
       headers: {
         "user-agent": "lenguapedia",
       },
