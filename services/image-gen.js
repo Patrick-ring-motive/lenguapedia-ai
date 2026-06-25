@@ -5,6 +5,20 @@ const seconds = 31535000;
 for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cache-Control", "Surrogate-Control", "Vercel-CDN-Cache-Control"]) {
   cacheHeaders[header] = `public, max-age=${seconds}, s-max-age=${seconds}, stale-if-error=31535000, stale-while-revalidate=31535000`;
 }
+
+const cache = caches.default;
+cache.get = async(key)=>{
+  try{
+    return await cache.match(key);
+  }catch{}
+};
+
+cache.set = async(key,value)=>{
+  try{
+    return await cache.put(key,value);
+  }catch{}
+};
+
 const promptCache = {};
 
 const aiRunBytes = async (...args) => {
@@ -49,6 +63,12 @@ export async function onRequest(request, env, ctx) {
         ...cacheHeaders
       },
     });
+  }else{
+    const cacheRes = await cache.get(request.url);
+    if(cacheRes){
+      promptCache[prompt] = [...await cacheRes.clone().bytes()];
+      return cacheRes.clone();
+    }
   }
 
   let inputs = {
@@ -74,9 +94,19 @@ export async function onRequest(request, env, ctx) {
   if (avg < 89) {
     inputs.prompt = 'a family friendly artistic image of ' + inputs.prompt;
     bytes = await aiRunBytes(imageModel, inputs);
+    avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
   }
 
-  promptCache[prompt] = [...bytes];
+  if (avg >= 89) {
+    promptCache[prompt] = [...bytes];
+    cache.set(request.url,new Response(bytes,{
+          headers: {
+            "access-control-allow-origin": "*",
+            "content-type": "image/jpg",
+            ...cacheHeaders
+          }
+        }));
+  }
   return new Response(bytes, {
     headers: {
       "access-control-allow-origin": "*",
