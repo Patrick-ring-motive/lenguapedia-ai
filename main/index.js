@@ -108,8 +108,10 @@ globalThis.onRequest = async (request, env, ctx) => {
   try {
     const referHost = request.headers.get('referer') && new URL(request.headers.get('referer')).host;
     const localhost = new URL(request.url).host;
-    if(referHost && referHost !== localhost){
-      return new Response(null,{status:400});
+    if (referHost && referHost !== localhost) {
+      return new Response(null, {
+        status: 400
+      });
     }
     const urlparts = request.url.split("/");
     const title1 = decodeURIComponent(urlparts[4]).replaceAll("_", " ");
