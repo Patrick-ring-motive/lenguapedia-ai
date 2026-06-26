@@ -331,8 +331,9 @@ async function onLengRequest(request, env, ctx) {
 
 async function getTop2WikipediaTitles(query) {
   query = decodeURIComponent(String(query)).replaceAll(/[^a-zA-Z]/g, " ");
+  const fullQuery = `${query} -incategory:"Disambiguation pages"`
   const res = await fetch(
-    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srlimit=2&format=json&origin=*`, {
+    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(fullQuery)}&srlimit=2&format=json&origin=*`, {
       headers: {
         "user-agent": "lenguapedia",
       },
