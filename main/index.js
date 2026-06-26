@@ -251,7 +251,7 @@ img[srcset]{display:none;}
     let regres = await onLengRequest(request, env, ctx);
     if (regres.status >= 400) {
       try {
-        let query = request.url.split("wiki")[1] || new URL(request.url).pathname;
+        let query = String(request.url.split("wiki")[1] || String(new URL(request.url).pathname).replaceAll(/[^a-zA-Z0-9]/g,' '));
         let parts = query.split(/\/|\s+/).map(x => x.trim()).filter(Boolean);
         let one;
         let two;
