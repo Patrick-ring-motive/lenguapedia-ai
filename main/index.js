@@ -48,10 +48,10 @@ const fetchText = async (...args) => {
   }
 };
 
-const getArticle = (baseURL,title,userAgent)=>{
+const getArticle = (baseURL, title, userAgent) => {
   const url = new URL(baseURL);
-  url.searchParams.set('title',title);
-  url.searchParams.set('useragent',userAgent);
+  url.searchParams.set('title', title);
+  url.searchParams.set('useragent', userAgent);
   return fetchText(String(url));
 };
 
@@ -153,8 +153,8 @@ globalThis.onRequest = async (request, env, ctx) => {
       );
     if (urlparts[3] === "merge") {
       const articles = await Promise.all([
-        getArticle(env.FIND_ARTICLE_URL,urlparts[4],request.headers.get('user-agent')),
-        getArticle(env.FIND_ARTICLE_URL,urlparts[5],request.headers.get('user-agent')),
+        getArticle(env.FIND_ARTICLE_URL, urlparts[4], request.headers.get('user-agent')),
+        getArticle(env.FIND_ARTICLE_URL, urlparts[5], request.headers.get('user-agent')),
       ]);
       let art1 = articles[0]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[0];
       let art2 = articles[1]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
@@ -251,7 +251,7 @@ img[srcset]{display:none;}
     let regres = await onLengRequest(request, env, ctx);
     if (regres.status >= 400) {
       try {
-        let query = String(request.url.split("wiki")[1] || norm(decodeURIComponent(String(new URL(request.url).pathname))).replaceAll(/[^a-zA-Z0-9]/g,' '));
+        let query = String(request.url.split("wiki")[1] || norm(decodeURIComponent(String(new URL(request.url).pathname))).replaceAll(/[^a-zA-Z0-9]/g, ' '));
         let parts = query.split(/\/|\s+/).map(x => x.trim()).filter(Boolean);
         let one;
         let two;
@@ -324,7 +324,11 @@ async function onLengRequest(request, env, ctx) {
     if (/html/i.test(res.headers.get("content-type"))) {
       bodyText += contentScripts;
     }
-    res = new Response(bodyText, {status:res.status,statusText:res.statusText,headers:res.headers});
+    res = new Response(bodyText, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: res.headers
+    });
   }
   return res;
 }
