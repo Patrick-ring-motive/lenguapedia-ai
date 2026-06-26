@@ -79,7 +79,7 @@ function merger(article1, article2) {
     RegExp(`\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`, "g"),
   );
   for (const r of rex) {
-    const matches = (
+    let matches = (
       String(article2).replace(/\n/g, " ").match(r) || []
     ).filter(
       (x) =>
@@ -92,7 +92,7 @@ function merger(article1, article2) {
       .replace(/\n/g, " ")
       .replaceAll(r, (x) => {
         if (!/ (href|rel)$/.test(x)) {
-          x = matches[i];
+          x = matches[i]+i;
         }
         i++;
         i = i % matches.length;
