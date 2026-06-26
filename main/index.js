@@ -49,6 +49,12 @@ const fetchText = async (...args) => {
   }
 };
 
+const getArticle = (baseURL,title)=>{
+  consr url = new URL(baseURL);
+  url.searchParams.set('title',title);
+  return fetchText(String(url));
+};
+
 const onLengRequestText = async (...args) => {
   try {
     return await (await onLengRequest(new Request(...args))).text();
@@ -147,12 +153,8 @@ globalThis.onRequest = async (request, env, ctx) => {
       );
     if (urlparts[3] === "merge") {
       const articles = await Promise.all([
-        onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[4]}`, {
-          headers: request.headers,
-        }),
-        onLengRequestText(`https://en.wikipedia.org/wiki/${urlparts[5]}`, {
-          headers: request.headers,
-        }),
+        getArticle(env.FIND_ARTICLE_URL,urlparts[4]),
+        getArticle(env.FIND_ARTICLE_URL,urlparts[5]),
       ]);
       let art1 = articles[0]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[0];
       let art2 = articles[1]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
@@ -322,7 +324,7 @@ async function onLengRequest(request, env, ctx) {
     if (/html/i.test(res.headers.get("content-type"))) {
       bodyText += contentScripts;
     }
-    res = new Response(bodyText, res);
+    res = new Response(bodyText, {status:res.status,statusText:res.statusText,headers:res.headers});
   }
   return res;
 }
