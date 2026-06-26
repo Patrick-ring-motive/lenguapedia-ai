@@ -49,9 +49,10 @@ const fetchText = async (...args) => {
   }
 };
 
-const getArticle = (baseURL,title)=>{
+const getArticle = (baseURL,title,userAgent)=>{
   const url = new URL(baseURL);
   url.searchParams.set('title',title);
+  url.searchParams.set('useragent',userAgent);
   return fetchText(String(url));
 };
 
@@ -153,8 +154,8 @@ globalThis.onRequest = async (request, env, ctx) => {
       );
     if (urlparts[3] === "merge") {
       const articles = await Promise.all([
-        getArticle(env.FIND_ARTICLE_URL,urlparts[4]),
-        getArticle(env.FIND_ARTICLE_URL,urlparts[5]),
+        getArticle(env.FIND_ARTICLE_URL,urlparts[4],request.headers.get('user-agent')),
+        getArticle(env.FIND_ARTICLE_URL,urlparts[5],request.headers.get('user-agent')),
       ]);
       let art1 = articles[0]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[0];
       let art2 = articles[1]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
