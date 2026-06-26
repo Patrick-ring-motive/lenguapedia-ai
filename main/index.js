@@ -76,7 +76,7 @@ function merger(article1, article2) {
     "are",
   ];
   const rex = replacers.map((x) =>
-    RegExp(`\\b${x}\\s+\\w+\\b`, "g"),
+    RegExp(`\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`, "g"),
   );
   for (const r of rex) {
     let matches = (
@@ -99,7 +99,7 @@ function merger(article1, article2) {
         return x;
       });
   }
-  return article1;
+  return "cheese"+article1;
 }
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
