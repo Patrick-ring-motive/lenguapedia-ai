@@ -89,7 +89,7 @@ function merger(article1, article2) {
     "by",
     "may",
     "been",
-    "from"
+    "from",
     "will"
   ];
   const rex = replacers.map((x) =>
