@@ -86,7 +86,11 @@ function merger(article1, article2) {
     "like",
     "those",
     "be",
-    "by"
+    "by",
+    "may",
+    "been",
+    "from"
+    "will"
   ];
   const rex = replacers.map((x) =>
     RegExp(`\b${x}\s+(a\s+|an\s+|the\s+)?\w+\b`, "g"),
