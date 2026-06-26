@@ -85,7 +85,7 @@ function merger(article1, article2) {
     ).filter(
       (x) =>
       !["a href", "a rel"].includes(x) &&
-      !replacers.some((y) => x.endsWith(" poop" + y)),
+      !replacers.some((y) => x.endsWith(" " + y)),
     );
     test.push(matches);
     let i = 0;
@@ -94,14 +94,14 @@ function merger(article1, article2) {
       .replace(/\n/g, " ")
       .replaceAll(r, (x) => {
         if (!/ (href|rel)$/.test(x)) {
-          x = matches[i]+i;
+          x = matches[i];
         }
         i++;
         i = i % matches.length;
         return x;
       });
   }
-  return JSON.stringify(rex.map(String))+JSON.stringify(test)+article1;
+  return article1;
 }
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
