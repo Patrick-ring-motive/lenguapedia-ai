@@ -57,6 +57,10 @@ const onLengRequestText = async (...args) => {
   }
 };
 
+const norm = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
 function merger(article1, article2) {
   const replacers = [
     "the",
@@ -100,7 +104,7 @@ function merger(article1, article2) {
   let test = [];
   for (const r of rex) {
     let matches = (
-      String(article2).replace(/\n/g, " ").match(r) || []
+      norm(String(article2)).replace(/\n/g, " ").match(r) || []
     ).filter(
       (x) =>
       !["a href", "a rel"].includes(x) &&
