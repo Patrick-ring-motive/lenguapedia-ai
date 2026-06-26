@@ -101,7 +101,7 @@ function merger(article1, article2) {
         return x;
       });
   }
-  return JSON.stringify(test)+article1;
+  return JSON.stringify(rex.map(String))+JSON.stringify(test)+article1;
 }
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
