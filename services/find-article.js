@@ -8,7 +8,6 @@ if (typeof env === "undefined") {
   globalThis.env = {};
 }
 
-
 const fetchResponse = async (...args) => {
   try {
     return await fetch(...args);
@@ -20,46 +19,47 @@ const fetchResponse = async (...args) => {
   }
 };
 
-
 globalThis.onRequest = async (request, env, ctx) => {
-    const referHost = request.headers.get('referer') && new URL(request.headers.get('referer')).host;
-    const url = new URL(request.url);
-    const title = url.searchParams.get('title');
-    const reqHost = url.host;
-    /*if (referHost && referHost !== reqHost) {
-      return new Response(null, {
-        status: 400
-      });
-    }*/
+  const referHost = request.headers.get('referer') && new URL(request.headers.get('referer')).host;
+  const url = new URL(request.url);
+  const title = url.searchParams.get('title');
+  const reqHost = url.host;
+  /*if (referHost && referHost !== reqHost) {
+    return new Response(null, {
+      status: 400
+    });
+  }*/
 
-    const reqInit = {
-      headers: {'user-agent':'lenguapedia','cahce-control':'no-cache'},
-    };
+  const reqInit = {
+    headers: {
+      'user-agent': 'lenguapedia',
+      'cahce-control': 'no-cache'
+    },
+  };
 
-    let res, req;
-    for (const host of hostTargets) {
-      url.host = host;
-      url.pathname = `/wiki/${title}`;
-      url.search='';
-      console.log(String(url));
-      if (request.body) {
-        reqInit.body = request.body;
-      }
-      req = new Request(String(url), reqInit);
-      res = await fetchResponse(req);
-      if (/^2/.test(res.status)) {
-        break;
-      }
+  let res, req;
+  for (const host of hostTargets) {
+    url.host = host;
+    url.pathname = `/wiki/${title}`;
+    url.search = '';
+    console.log(String(url));
+    if (request.body) {
+      reqInit.body = request.body;
     }
-    if(!/^2/.test(res.status)){
-      const newTitle = await getTopWikiTitle(title);
-      res = await fetch(`https://en.wikipedia.org/wiki/${newTitle}`,reqInit);
+    req = new Request(String(url), reqInit);
+    res = await fetchResponse(req);
+    if (/^2/.test(res.status)) {
+      break;
     }
-    return res;
+  }
+  if (!/^2/.test(res.status)) {
+    const newTitle = await getTopWikiTitle(title);
+    res = await fetch(`https://en.wikipedia.org/wiki/${newTitle}`, reqInit);
+  }
+  return res;
 };
 
 export const onRequest = globalThis.onRequest;
-
 
 async function getTopWikiTitle(query) {
   query = decodeURIComponent(String(query)).replaceAll(/[^a-zA-Z]/g, " ");
@@ -76,6 +76,6 @@ async function getTopWikiTitle(query) {
 }
 export default {
   async fetch(request, env, ctx) {
-    return onRequest(request,env,ctx);
+    return onRequest(request, env, ctx);
   }
 };
