@@ -99,7 +99,7 @@ export async function onRequest(request, env, ctx) {
 
   if (avg >= 89) {
     promptCache[prompt] = [...bytes];
-    cache.set(request.url, new Response(bytes, {
+    await cache.set(request.url, new Response(bytes, {
       headers: {
         "access-control-allow-origin": "*",
         "content-type": "image/jpg",
