@@ -7,16 +7,16 @@ for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cach
 }
 
 const cache = caches.default;
-cache.get = async(key)=>{
-  try{
+cache.get = async (key) => {
+  try {
     return await cache.match(key);
-  }catch{}
+  } catch {}
 };
 
-cache.set = async(key,value)=>{
-  try{
-    return await cache.put(key,value);
-  }catch{}
+cache.set = async (key, value) => {
+  try {
+    return await cache.put(key, value);
+  } catch {}
 };
 
 const promptCache = {};
@@ -63,9 +63,9 @@ export async function onRequest(request, env, ctx) {
         ...cacheHeaders
       },
     });
-  }else{
+  } else {
     const cacheRes = await cache.get(request.url);
-    if(cacheRes){
+    if (cacheRes) {
       promptCache[prompt] = [...await cacheRes.clone().bytes()];
       return cacheRes.clone();
     }
@@ -99,13 +99,13 @@ export async function onRequest(request, env, ctx) {
 
   if (avg >= 89) {
     promptCache[prompt] = [...bytes];
-    cache.set(request.url,new Response(bytes,{
-          headers: {
-            "access-control-allow-origin": "*",
-            "content-type": "image/jpg",
-            ...cacheHeaders
-          }
-        }));
+    cache.set(request.url, new Response(bytes, {
+      headers: {
+        "access-control-allow-origin": "*",
+        "content-type": "image/jpg",
+        ...cacheHeaders
+      }
+    }));
   }
   return new Response(bytes, {
     headers: {
