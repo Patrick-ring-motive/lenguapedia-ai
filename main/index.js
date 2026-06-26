@@ -161,7 +161,7 @@ globalThis.onRequest = async (request, env, ctx) => {
         merger(art1, art2)
         .replaceAll(
           new RegExp(
-            `([^a-zA-Z]|^)${escapeRegExp(title1)}([^a-zA-Z]|$)`,
+            `([^a-zA-Z]|^)${escapeRegExp(title1)}(e?s?[^a-zA-Z]|$)`,
             "gi",
           ),
           `$1${combined}$2`,
