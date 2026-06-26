@@ -1,6 +1,5 @@
 const hostTargets = [
   "en.wikipedia.org",
-  "www.wikidata.org",
   "en.wiktionary.org",
 ];
 
