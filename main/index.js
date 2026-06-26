@@ -78,6 +78,7 @@ function merger(article1, article2) {
   const rex = replacers.map((x) =>
     RegExp(`\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`, "g"),
   );
+  let test = [];
   for (const r of rex) {
     let matches = (
       String(article2).replace(/\n/g, " ").match(r) || []
@@ -86,6 +87,7 @@ function merger(article1, article2) {
       !["a href", "a rel"].includes(x) &&
       !replacers.some((y) => x.endsWith(" poop" + y)),
     );
+    test.push(matches);
     let i = 0;
     if (!matches.length) continue;
     article1 = String(article1)
@@ -99,7 +101,7 @@ function merger(article1, article2) {
         return x;
       });
   }
-  return "cheese"+article1;
+  return JSON.stringify(test)+article1;
 }
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
