@@ -244,7 +244,7 @@ img[srcset]{display:none;}
     if (regres.status >= 400) {
       try {
         let query = request.url.split("wiki")[1]||new URL(request.url).pathname;
-        let parts = query.split(/\s+/);
+        let parts = query.split(/\/|\s+/).map(x=>x.trim()).filter(Boolean);
         let one;
         let two;
         if(parts.length > 1){
