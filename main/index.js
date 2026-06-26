@@ -76,7 +76,7 @@ function merger(article1, article2) {
     "are",
   ];
   const rex = replacers.map((x) =>
-    RegExp(`\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`, "g"),
+    RegExp(`\b${x}\s+(a\s+|an\s+|the\s+)?\w+\b`, "g"),
   );
   let test = [];
   for (const r of rex) {
