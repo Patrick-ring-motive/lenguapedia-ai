@@ -104,7 +104,7 @@ function merger(article1, article2) {
     ).filter(
       (x) =>
       !["a href", "a rel"].includes(x) &&
-      !replacers.some((y) => x.endsWith(" " + y)),
+      !replacers.some((y) => x.toLowerCase().endsWith(" " + y)),
     );
     test.push(matches);
     let i = 0;
