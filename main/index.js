@@ -243,11 +243,25 @@ img[srcset]{display:none;}
     let regres = await onLengRequest(request, env, ctx);
     if (regres.status >= 400) {
       try {
+        let query = request.url.split("wiki")[1]||new URL(request.url).pathname;
+        let parts = query.split(/\s+/);
+        let one;
+        let two;
+        if(parts.length > 1){
+          one = parts.shift();
+          two = parts.join(' ');
+        }else{
+          one = query.slice(0,~~(query.length/2));
+          two = query.slice(~~(query.length/2));
+        }
         const loc =
           new URL(request.url).origin +
           "/merge/" +
           (
-            await getTop2WikipediaTitles(String(request.url.split("wiki")[1]))
+            [
+              (await getTop2WikipediaTitles(one))[0],
+              (await getTop2WikipediaTitles(two))[0]
+            ]
           ).join("/");
         return new Response(null, {
           status: 302,
