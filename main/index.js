@@ -83,7 +83,7 @@ function merger(article1, article2) {
       String(article2).replace(/\n/g, " ").match(r) || []
     ).filter(
       (x) =>
-      !["a href", "a rel"].includes(x) )//&&
+      !["a href", "a rel"].includes(x) //&&
       //!replacers.some((y) => x.endsWith(" " + y)),
     );
     let i = 0;
