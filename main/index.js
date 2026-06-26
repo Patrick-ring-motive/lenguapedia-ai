@@ -130,7 +130,7 @@ globalThis.onRequest = async (request, env, ctx) => {
         }),
       ]);
       let art1 = articles[0]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[0];
-      let art2 = articles[1]?.split?.(/<main[^>]+>|<main[^>]*>//)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
+      let art2 = articles[1]?.split?.(/<main[^>]+>|<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
       return new Response(
         articles[0]
         .split(/<main[^>]+>|<main[^>]*>/)[0]
