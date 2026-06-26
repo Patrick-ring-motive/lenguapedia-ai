@@ -133,7 +133,7 @@ globalThis.onRequest = async (request, env, ctx) => {
       let art2 = articles[1]?.split?.(/<main[^>]*>/)?.[1]?.split?.("</main>")?.[0] || articles[1] || articles[0];
       return new Response(
         articles[0]
-        .split(/<main[^>]+>/)[0]
+        .split(/<main[^>]*>/)[0]
         .replace(
           /<title.+<\/title>/,
           `<title>${urlparts[4]} ${urlparts[5]}</title>`,
