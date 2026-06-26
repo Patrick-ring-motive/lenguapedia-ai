@@ -50,7 +50,7 @@ const fetchText = async (...args) => {
 };
 
 const getArticle = (baseURL,title)=>{
-  consr url = new URL(baseURL);
+  const url = new URL(baseURL);
   url.searchParams.set('title',title);
   return fetchText(String(url));
 };
