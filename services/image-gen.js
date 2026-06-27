@@ -13,6 +13,15 @@ cache.get = async (key) => {
   } catch {}
 };
 
+const fetchBytes = async(...args)=>{
+  try{
+    const res = await fetch(...args);
+    return await res.bytes();
+  }catch(e){
+    return new Response(String(e)).bytes();
+  }
+};
+
 cache.set = async (key, value) => {
   try {
     return await cache.put(key, value);
@@ -55,7 +64,8 @@ export async function onRequest(request, env, ctx) {
   }
   const reqURL = new URL(request.url);
   const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
-  if (promptCache[prompt]) {
+  const image = reqURL.searchParams.get('image');
+    if (promptCache[prompt]) {
     return new Response(new Uint8Array(promptCache[prompt]), {
       headers: {
         "content-type": "image/jpg",
@@ -75,6 +85,10 @@ export async function onRequest(request, env, ctx) {
     prompt,
     ...imgDefaults
   };
+
+  if(image){
+    inputs.image = await fetchBytes(image);
+  }
 
   let bytes = await aiRunBytes(imageModel, inputs);
   let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
