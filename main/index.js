@@ -162,6 +162,10 @@ globalThis.onRequest = async (request, env, ctx) => {
         status: 400
       });
     }
+if(request.url.includes('Special:Random')){
+  
+}
+    
     const urlparts = request.url.split("/");
     const title1 = decodeURIComponent(urlparts[4]).replaceAll("_", " ");
     const combined =
