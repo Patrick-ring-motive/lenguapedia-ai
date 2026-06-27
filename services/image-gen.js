@@ -87,7 +87,7 @@ export async function onRequest(request, env, ctx) {
     const imgBytes = [...await fetchBytes(image)];
     const imgInput = {
       image: imgBytes,
-      prompt: "Generate a prompt with which I can recreate this image",
+      prompt: "Generate a detailed prompt with which I can recreate this image",
       max_tokens: 512,
     };
     const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
