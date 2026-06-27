@@ -29,6 +29,10 @@ const swapWiki = () => {
     }
 
   }
+  const singles = [...document.querySelectorAll(':not(:has(*)):not(style):not(script)')];
+  for(const x of singles){
+    x.textContent = (x.textContent||x.innerText).replaceAll(/wikipedia/gi, 'Lenguapedia');
+  }
 };
 
 for (const host of env.hostTargets) {
