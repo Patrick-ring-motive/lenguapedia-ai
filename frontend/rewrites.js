@@ -32,7 +32,10 @@
     }
     const singles = [...document.querySelectorAll(':not(:has(*)):not(style):not(script)')];
     for (const x of singles) {
-      x.textContent = (x.textContent || x.innerText).replaceAll(/wikipedia/gi, 'Lenguapedia');
+      const txt = (x.textContent || x.innerText).replaceAll(/wikipedia/gi, 'Lenguapedia');
+      if(txt != (x.textContent || x.innerText)){
+        x.textContent = txt;
+      }
     }
     document.querySelector('[data-text="Dark"]')?.click?.();
   };
@@ -72,8 +75,10 @@
     }
   });
   swapWiki();
+  const style = document.createElement('style');
+  
 })();
 (async()=>{
-  await import('https://patrick-ring-motive.github.io/electric/color.js');
-  await import('https://patrick-ring-motive.github.io/electric/hooks.js');
+ // await import('https://patrick-ring-motive.github.io/electric/color.js');
+ // await import('https://patrick-ring-motive.github.io/electric/hooks.js');
 })();
