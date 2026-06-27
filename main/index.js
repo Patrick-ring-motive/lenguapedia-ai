@@ -248,7 +248,7 @@ xxmain img{width:100%;max-width:100vh;min-height:100% !important;}
 
 .img-wrap{border:none !important;}
 
-
+[class*="mw-logo"],
 .mw-logo-wordmark,
 main img {
   opacity: 0;
