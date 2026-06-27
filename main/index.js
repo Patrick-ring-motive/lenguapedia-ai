@@ -353,9 +353,9 @@ async function onLengRequest(request, env, ctx) {
         bodyText = JSON.stringify(JSON.parse(bodyText), null, 2);
       } catch {}
     }
-    if (/html/i.test(res.headers.get("content-type"))) {
-      bodyText += contentScripts;
-    }
+    
+      bodyText = bodyText.replace(/<\/head>/i, contentScripts+'</head>');
+
     res = new Response(bodyText, {
       status: res.status,
       statusText: res.statusText,
