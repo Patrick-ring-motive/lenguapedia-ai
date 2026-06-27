@@ -93,8 +93,8 @@ export async function onRequest(request, env, ctx) {
       prompt: "Generate a detailed prompt with which I can recreate this image",
       max_tokens: 512,
     };
-    const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
-    inputs.prompt += JSON.stringify(response);
+    //const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
+    //inputs.prompt += JSON.stringify(response);
     inputs.image = imgBytes;
     imageModel = "@cf/runwayml/stable-diffusion-v1-5-img2img";
   }
