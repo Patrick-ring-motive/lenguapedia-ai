@@ -50,13 +50,16 @@ async function getRandomWikipediaTitle() {
     '&format=json' +
     '&origin=*';
 
-  const data = await fetchResponse(url,{headers:{'user-agent':'lenguapedia'}}).then(r => r.json());
+  const data = await fetchResponse(url, {
+    headers: {
+      'user-agent': 'lenguapedia'
+    }
+  }).then(r => r.json());
   const page = Object.values(data.query.pages)[0];
   return page.title;
 }
 
 getRandomWikipediaTitle().then(console.log);
-
 
 const fetchText = async (...args) => {
   try {
@@ -162,12 +165,17 @@ globalThis.onRequest = async (request, env, ctx) => {
         status: 400
       });
     }
-if(request.url.includes('Special:Random')){
-  const rand = await Promise.all([getRandomWikipediaTitle(),getRandomWikipediaTitle()]);
-  const rurl = 'https://'+localhost+'/merge/'+rand.join('/');
-  return new Response(null,{status:302,headers:{location:rurl}});
-}
-    
+    if (request.url.includes('Special:Random')) {
+      const rand = await Promise.all([getRandomWikipediaTitle(), getRandomWikipediaTitle()]);
+      const rurl = 'https://' + localhost + '/merge/' + rand.join('/');
+      return new Response(null, {
+        status: 302,
+        headers: {
+          location: rurl
+        }
+      });
+    }
+
     const urlparts = request.url.split("/");
     const title1 = decodeURIComponent(urlparts[4]).replaceAll("_", " ");
     const combined =
