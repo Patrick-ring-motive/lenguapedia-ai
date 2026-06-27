@@ -87,7 +87,7 @@ export async function onRequest(request, env, ctx) {
   };
 
   if(image){
-    inputs.image = await fetchBytes(image);
+    inputs.image = [...await fetchBytes(image)];
   }
 
   let bytes = await aiRunBytes(imageModel, inputs);
