@@ -76,7 +76,8 @@
   });
   swapWiki();
   const style = document.createElement('style');
-  
+  style.innerHTML = `[class*="mw-logo"]{opacity:0;}`;
+  document.firstElementChild.appendChild(style);
 })();
 (async()=>{
  // await import('https://patrick-ring-motive.github.io/electric/color.js');
