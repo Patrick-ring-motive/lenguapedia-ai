@@ -63,7 +63,7 @@ export async function onRequest(request, env, ctx) {
     });
   }*/
   const reqURL = new URL(request.url);
-  const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
+  let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
   const image = reqURL.searchParams.get('image');
     if (promptCache[prompt]) {
     return new Response(new Uint8Array(promptCache[prompt]), {
@@ -81,14 +81,23 @@ export async function onRequest(request, env, ctx) {
     }
   }
 
+  
+
+  if(image){
+    const imgBytes = [...await fetchBytes(image)];
+    const imgInput = {
+      image: imgBytes,
+      prompt: "Generate a prompt with which I can recreate this image",
+      max_tokens: 512,
+    };
+    const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
+    prompt += JSON.stringify(response);
+  }
+
   let inputs = {
     prompt,
     ...imgDefaults
   };
-
-  if(image){
-    inputs.image = [...await fetchBytes(image)];
-  }
 
   let bytes = await aiRunBytes(imageModel, inputs);
   let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
