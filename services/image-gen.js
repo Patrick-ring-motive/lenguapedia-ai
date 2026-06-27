@@ -96,6 +96,7 @@ export async function onRequest(request, env, ctx) {
     //const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
     //inputs.prompt += JSON.stringify(response);
     inputs.image = imgBytes;
+    inputs.num_steps = 20;
     imageModel = "@cf/runwayml/stable-diffusion-v1-5-img2img";
   }
 
