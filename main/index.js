@@ -355,11 +355,12 @@ async function onLengRequest(request, env, ctx) {
     }
     
       bodyText = bodyText.replace(/<\/head>/i, contentScripts+'</head>');
-
+     const headers = new Headers(res.headers.entries());
+     headers.delete('content-security-policy');
     res = new Response(bodyText, {
       status: res.status,
       statusText: res.statusText,
-      headers: res.headers
+      headers
     });
   }
   return res;
