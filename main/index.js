@@ -40,6 +40,24 @@ const fetchResponse = async (...args) => {
   }
 };
 
+async function getRandomWikipediaTitle() {
+  const url =
+    'https://en.wikipedia.org/w/api.php' +
+    '?action=query' +
+    '&generator=random' +
+    '&grnnamespace=0' +
+    '&prop=info' +
+    '&format=json' +
+    '&origin=*';
+
+  const data = await fetchResponse(url,{headers:{'user-agent':'lenguapedia'}}).then(r => r.json());
+  const page = Object.values(data.query.pages)[0];
+  return page.title;
+}
+
+getRandomWikipediaTitle().then(console.log);
+
+
 const fetchText = async (...args) => {
   try {
     return await (await fetchResponse(...args)).text();
