@@ -34,6 +34,7 @@
     for (const x of singles) {
       x.textContent = (x.textContent || x.innerText).replaceAll(/wikipedia/gi, 'Lenguapedia');
     }
+    document.querySelector('[data-text="Dark"]')?.click?.();
   };
 
   for (const host of env.hostTargets) {
