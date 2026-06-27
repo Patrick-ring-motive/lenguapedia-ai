@@ -57,11 +57,11 @@ const getRefHost = req => {
 };
 
 export async function onRequest(request, env, ctx) {
-  if (!getRefHost(request)?.includes?.(env.REF_HOST)) {
+  /*if (!getRefHost(request)?.includes?.(env.REF_HOST)) {
     return new Response(request.url, {
       status: 400
     });
-  }
+  }*/
   const reqURL = new URL(request.url);
   const prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
   const image = reqURL.searchParams.get('image');
