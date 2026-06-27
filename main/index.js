@@ -163,7 +163,9 @@ globalThis.onRequest = async (request, env, ctx) => {
       });
     }
 if(request.url.includes('Special:Random')){
-  
+  const rand = await Promise.all([getRandomWikipediaTitle(),getRandomWikipediaTitle()]);
+  const rurl = 'https://'+localhost+'/merge/'+rand.join('/');
+  return new Response(null,{status:302,headers:{location:rurl}});
 }
     
     const urlparts = request.url.split("/");
