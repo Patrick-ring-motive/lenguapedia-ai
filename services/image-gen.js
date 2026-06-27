@@ -81,7 +81,10 @@ export async function onRequest(request, env, ctx) {
     }
   }
 
-  
+  let inputs = {
+    prompt,
+    ...imgDefaults
+  };
 
   if(image){
     const imgBytes = [...await fetchBytes(image)];
@@ -91,13 +94,12 @@ export async function onRequest(request, env, ctx) {
       max_tokens: 512,
     };
     const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
-    prompt += JSON.stringify(response);
+    inputs.prompt += JSON.stringify(response);
+    inputs.image = imgBytes;
+    imageModel = "@cf/runwayml/stable-diffusion-v1-5-img2img";
   }
 
-  let inputs = {
-    prompt,
-    ...imgDefaults
-  };
+  
 
   let bytes = await aiRunBytes(imageModel, inputs);
   let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
