@@ -72,3 +72,7 @@
   });
   swapWiki();
 })();
+(async()=>{
+  await import('https://patrick-ring-motive.github.io/electric/color.js');
+  await import('https://patrick-ring-motive.github.io/electric/hooks.js');
+})();
