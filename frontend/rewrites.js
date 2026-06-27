@@ -1,3 +1,4 @@
+(()=>{
 globalThis.env ??= {};
 env.hostTargets ??= [];
 
@@ -70,3 +71,4 @@ document.addEventListener("readystatechange", () => {
   }
 });
 swapWiki();
+})();
