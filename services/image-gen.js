@@ -56,6 +56,19 @@ const getRefHost = req => {
   return '';
 };
 
+const imgDesc = async(imgBytes)=>{
+  try{
+    const imgInput = {
+      image: imgBytes,
+      prompt: "Generate a prompt with which I can recreate this image",
+      max_tokens: 512,
+    };
+    return await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
+  }catch(e){
+    return {error:String(e)};
+  }
+};
+
 export async function onRequest(request, env, ctx) {
   /*if (!getRefHost(request)?.includes?.(env.REF_HOST)) {
     return new Response(request.url, {
@@ -88,13 +101,8 @@ export async function onRequest(request, env, ctx) {
 
   if(image){
     const imgBytes = [...await fetchBytes(image)];
-    const imgInput = {
-      image: imgBytes,
-      prompt: "Generate a prompt with which I can recreate this image",
-      max_tokens: 512,
-    };
-    const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
-    inputs.prompt = JSON.stringify({...response,prompt});
+    const response = await imgDesc(imgBytes);
+    inputs.prompt = JSON.stringify({...response,prompt,url:image});
     prompt = input.prompt;
   }
 
