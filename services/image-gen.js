@@ -22,6 +22,14 @@ const fetchBytes = async(...args)=>{
   }
 };
 
+const fetchResponse = async(...args)=>{
+  try{
+    return await fetch(...args);
+  }catch(e){
+    return new Response(String(e),{status:500,statusText:String(e)});
+  }
+};
+
 cache.set = async (key, value) => {
   try {
     return await cache.put(key, value);
@@ -56,8 +64,13 @@ const getRefHost = req => {
   return '';
 };
 
-const imgDesc = async(imgBytes)=>{
+const imgDesc = async(url)=>{
   try{
+    const res = await fetchResponse(image);
+    if(!/^2/.test(res.status)){
+      return {error:String(res.statusText)};
+    }
+    const imgBytes = [...await res.bytes()];
     const imgInput = {
       image: imgBytes,
       prompt: "Generate a prompt with which I can recreate this image",
@@ -100,8 +113,7 @@ export async function onRequest(request, env, ctx) {
   };
 
   if(image){
-    const imgBytes = [...await fetchBytes(image)];
-    const response = await imgDesc(imgBytes);
+    const response = await imgDesc(image);
     inputs.prompt = JSON.stringify({...response,prompt,url:image});
     prompt = input.prompt;
   }
