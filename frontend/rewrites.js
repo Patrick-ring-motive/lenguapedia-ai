@@ -76,7 +76,7 @@
   });
   swapWiki();
   const style = document.createElement('style');
-  style.innerHTML = `[class*="mw-logo"]{opacity:0;}`;
+  style.innerText = `[class*="mw-logo"]{opacity:0;}`;
   document.firstElementChild.appendChild(style);
 })();
 (async()=>{
