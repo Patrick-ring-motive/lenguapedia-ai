@@ -124,7 +124,7 @@ export async function onRequest(request, env, ctx) {
   if(image){
     const response = await imgDesc(image);
     inputs.prompt = JSON.stringify({...response,prompt,url:image});
-    prompt = input.prompt;
+    prompt = inputs.prompt;
   }
 
   if (promptCache[prompt]) {
