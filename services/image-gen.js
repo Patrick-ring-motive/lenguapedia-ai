@@ -95,6 +95,7 @@ export async function onRequest(request, env, ctx) {
     };
     const response = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
     inputs.prompt = JSON.stringify({...response,prompt});
+    prompt = input.prompt;
   }
 
   
