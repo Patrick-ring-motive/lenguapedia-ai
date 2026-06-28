@@ -33,7 +33,7 @@
     const singles = [...document.querySelectorAll(':not(:has(*)):not(style):not(script)')];
     for (const x of singles) {
       const txt = (x.textContent || x.innerText).replaceAll(/wikipedia/gi, 'Lenguapedia');
-      if(txt != (x.textContent || x.innerText)){
+      if (txt != (x.textContent || x.innerText)) {
         x.textContent = txt;
       }
     }
@@ -79,7 +79,7 @@
   style.innerText = `[class*="mw-logo"]{opacity:0;}`;
   document.firstElementChild.appendChild(style);
 })();
-(async()=>{
- // await import('https://patrick-ring-motive.github.io/electric/color.js');
- // await import('https://patrick-ring-motive.github.io/electric/hooks.js');
+(async () => {
+  // await import('https://patrick-ring-motive.github.io/electric/color.js');
+  // await import('https://patrick-ring-motive.github.io/electric/hooks.js');
 })();
