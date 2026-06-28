@@ -64,9 +64,14 @@ const getRefHost = req => {
   return '';
 };
 
+const imgCache = {};
+
 const imgDesc = async(url)=>{
   try{
-    const res = await fetchResponse(image);
+    if(imgCache[url]){
+     return imgCache[url];
+    }
+    const res = await fetchResponse(url);
     if(!/^2/.test(res.status)){
       return {error:String(res.statusText)};
     }
@@ -76,7 +81,11 @@ const imgDesc = async(url)=>{
       prompt: "Generate a prompt with which I can recreate this image",
       max_tokens: 512,
     };
-    return await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
+    const desc = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
+    if(desc){
+      imgCache[url] = Object(desc);
+    }
+    return Object(desc);
   }catch(e){
     return {error:String(e)};
   }
