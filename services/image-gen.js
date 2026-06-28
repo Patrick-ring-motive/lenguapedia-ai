@@ -106,7 +106,21 @@ export async function onRequest(request, env, ctx) {
     prompt = input.prompt;
   }
 
-  
+  if (promptCache[prompt]) {
+    return new Response(new Uint8Array(promptCache[prompt]), {
+      headers: {
+        "content-type": "image/jpg",
+        "access-control-allow-origin": "*",
+        ...cacheHeaders
+      },
+    });
+  } else {
+    const cacheRes = await cache.get(request.url);
+    if (cacheRes) {
+      promptCache[prompt] = [...await cacheRes.clone().bytes()];
+      return cacheRes.clone();
+    }
+  }
 
   let bytes = await aiRunBytes(imageModel, inputs);
   let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
