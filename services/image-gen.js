@@ -13,20 +13,23 @@ cache.get = async (key) => {
   } catch {}
 };
 
-const fetchBytes = async(...args)=>{
-  try{
+const fetchBytes = async (...args) => {
+  try {
     const res = await fetch(...args);
     return await res.bytes();
-  }catch(e){
+  } catch (e) {
     return new Response(String(e)).bytes();
   }
 };
 
-const fetchResponse = async(...args)=>{
-  try{
+const fetchResponse = async (...args) => {
+  try {
     return await fetch(...args);
-  }catch(e){
-    return new Response(String(e),{status:500,statusText:String(e)});
+  } catch (e) {
+    return new Response(String(e), {
+      status: 500,
+      statusText: String(e)
+    });
   }
 };
 
@@ -66,14 +69,16 @@ const getRefHost = req => {
 
 const imgCache = {};
 
-const imgDesc = async(url)=>{
-  try{
-    if(imgCache[url]){
-     return imgCache[url];
+const imgDesc = async (url) => {
+  try {
+    if (imgCache[url]) {
+      return imgCache[url];
     }
     const res = await fetchResponse(url);
-    if(!/^2/.test(res.status)){
-      return {error:String(res.statusText)};
+    if (!/^2/.test(res.status)) {
+      return {
+        error: String(res.statusText)
+      };
     }
     const imgBytes = [...await res.bytes()];
     const imgInput = {
@@ -81,13 +86,15 @@ const imgDesc = async(url)=>{
       prompt: "Generate a prompt with which I can recreate this image",
       max_tokens: 512,
     };
-    const desc = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf",imgInput);
-    if(desc){
+    const desc = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf", imgInput);
+    if (desc) {
       imgCache[url] = Object(desc);
     }
     return Object(desc);
-  }catch(e){
-    return {error:String(e)};
+  } catch (e) {
+    return {
+      error: String(e)
+    };
   }
 };
 
@@ -100,7 +107,7 @@ export async function onRequest(request, env, ctx) {
   const reqURL = new URL(request.url);
   let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
   const image = reqURL.searchParams.get('image');
-    if (promptCache[prompt]) {
+  if (promptCache[prompt]) {
     return new Response(new Uint8Array(promptCache[prompt]), {
       headers: {
         "content-type": "image/jpg",
@@ -121,9 +128,13 @@ export async function onRequest(request, env, ctx) {
     ...imgDefaults
   };
 
-  if(image){
+  if (image) {
     const response = await imgDesc(image);
-    inputs.prompt = JSON.stringify({...response,prompt,url:image});
+    inputs.prompt = JSON.stringify({
+      ...response,
+      prompt,
+      url: image
+    });
     prompt = inputs.prompt;
   }
 
