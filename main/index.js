@@ -353,10 +353,10 @@ async function onLengRequest(request, env, ctx) {
         bodyText = JSON.stringify(JSON.parse(bodyText), null, 2);
       } catch {}
     }
-    
-      bodyText = bodyText.replace(/<\/head>/i, contentScripts+'</head>');
-     const headers = new Headers(res.headers.entries());
-     headers.delete('content-security-policy');
+
+    bodyText = bodyText.replace(/<\/head>/i, contentScripts + '</head>');
+    const headers = new Headers(res.headers.entries());
+    headers.delete('content-security-policy');
     res = new Response(bodyText, {
       status: res.status,
       statusText: res.statusText,
