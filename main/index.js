@@ -219,7 +219,7 @@ globalThis.onRequest = async (request, env, ctx) => {
         }) +
         "</main>" +
         `<style>
-      nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
+      a,th,thead,nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
       img[src][srcset]{display:none;}
       .img-wrap {
   position: relative;
