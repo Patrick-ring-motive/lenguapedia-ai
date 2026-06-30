@@ -76,8 +76,11 @@
   });
   swapWiki();
   const style = document.createElement('style');
-  style.innerText = `[class*="mw-logo"]{opacity:0;}`;
-  document.firstElementChild.appendChild(style);
+  style.textContent = `
+  button,title,a,th,thead,nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
+  [class*="mw-logo"]{opacity:0;}
+  `;
+  (document.body||document.firstElementChild).appendChild(style);
 })();
 (async () => {
   // await import('https://patrick-ring-motive.github.io/electric/color.js');
