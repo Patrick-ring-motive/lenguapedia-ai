@@ -80,7 +80,7 @@
   button,title,a,th,thead,nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
   [class*="mw-logo"]{opacity:0 !important;}
   `;
-  (document.body||document.firstElementChild).appendChild(style);
+  (document.body || document.firstElementChild).appendChild(style);
 })();
 (async () => {
   // await import('https://patrick-ring-motive.github.io/electric/color.js');
