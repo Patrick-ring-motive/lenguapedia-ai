@@ -288,11 +288,11 @@ img[srcset]{display:none;}
         let one;
         let two;
         if (parts.length > 1) {
-          one = parts.shift();
-          two = parts.join(' ');
+          one = parts.slice(0, ~~(parts.length / 2)).join(' ');
+          two = parts.slice(~~(parts.length / 2));
         } else {
           one = query.slice(0, ~~(query.length / 2));
-          two = query.slice(~~(query.length / 2));
+          two = query.slice(~~(query.length / 2)).join(' ');
         }
         const loc =
           new URL(request.url).origin +
