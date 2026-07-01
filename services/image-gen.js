@@ -110,7 +110,10 @@ export async function onRequest(request, env, ctx) {
   const reqURL = new URL(request.url);
   let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
   const image = reqURL.searchParams.get('image');
-  if (promptCache[prompt]) {
+  const cacheKey = prompt; // snapshot BEFORE retry loop touches 
+  
+
+  if (promptCache[cacheKey]) {
     return new Response(new Uint8Array(promptCache[prompt]), {
       headers: {
         "content-type": "image/jpg",
@@ -141,7 +144,7 @@ export async function onRequest(request, env, ctx) {
     prompt = inputs.prompt;
   }
 
-  if (promptCache[prompt]) {
+  if (promptCache[cacheKey]) {
     return new Response(new Uint8Array(promptCache[prompt]), {
       headers: {
         "content-type": "image/jpg",
@@ -152,7 +155,7 @@ export async function onRequest(request, env, ctx) {
   } else {
     const cacheRes = await cache.get(request.url);
     if (cacheRes) {
-      promptCache[prompt] = [...await cacheRes.clone().bytes()];
+      promptCache[cacheKey] = [...await cacheRes.clone().bytes()];
       return cacheRes.clone();
     }
   }
@@ -194,7 +197,7 @@ export async function onRequest(request, env, ctx) {
   }
 
   if (avg >= 89) {
-    promptCache[prompt] = [...bytes];
+    promptCache[cacheKey] = [...bytes];
     await cache.set(request.url, new Response(bytes, {
       headers: {
         "access-control-allow-origin": "*",
