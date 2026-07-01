@@ -176,7 +176,7 @@ export async function onRequest(request, env, ctx) {
       .split(/\s+/)
       .map(x=>x.trim())
       .filter(Boolean)
-      .map(x => x.slice(0, -1))
+      .map(x =>x.length>3?x.slice(0, -1):x)
       .filter(Boolean)
       .join(' ');
     if (avg < 89) {
