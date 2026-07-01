@@ -42,6 +42,9 @@ cache.set = async (key, value) => {
 const promptCache = {};
 
 const aiRunBytes = async (...args) => {
+  const inputs = args[1];
+  inputs.num_steps = String(inputs.prompt).split(/\s/).length;
+  args[1] = inputs;
   const stream = await env.AI.run(...args);
   const resStream = new Response(stream);
   const bytes = await resStream.bytes();
@@ -156,23 +159,38 @@ export async function onRequest(request, env, ctx) {
 
   let bytes = await aiRunBytes(imageModel, inputs);
   let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-
+  
   if (avg < 89) {
     inputs.prompt = 'a family friendly artistic image of ' + prompt;
     bytes = await aiRunBytes(imageModel, inputs);
     avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
   }
-
-  if (avg < 89) {
-    inputs.prompt = prompt.split(/\s+/).map(x => x.slice(0, -1)).join(' ');
-    bytes = await aiRunBytes(imageModel, inputs);
-    avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-  }
-
-  if (avg < 89) {
-    inputs.prompt = 'a family friendly artistic image of ' + inputs.prompt;
-    bytes = await aiRunBytes(imageModel, inputs);
-    avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+  
+  let retyPrompt = prompt;
+  const numRetries = 3;
+  for(const _ of Array(numRetries)){
+    retyPrompt = retryPrompt.replace(/[^a-zA-Z]/g,' ')
+      .split(/\s+/)
+      .map(x=>x.trim())
+      .filter(Boolean)
+      .map(x => x.slice(0, -1))
+      .filter(Boolean)
+      .join(' ');
+    if (avg < 89) {
+      inputs.prompt = retyPrompt;
+      bytes = await aiRunBytes(imageModel, inputs);
+      avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+    }else{
+      break;
+    }
+  
+    if (avg < 89) {
+      inputs.prompt = 'a family friendly artistic image of ' + retyPrompt;
+      bytes = await aiRunBytes(imageModel, inputs);
+      avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
+    }else{
+      break;
+    }
   }
 
   if (avg >= 89) {
