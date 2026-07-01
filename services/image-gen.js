@@ -166,10 +166,10 @@ export async function onRequest(request, env, ctx) {
     avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
   }
   
-  let retyPrompt = prompt;
+  let retryPrompt = prompt;
   const numRetries = 3;
   for(const _ of Array(numRetries)){
-    retyPrompt = retryPrompt.replace(/[^a-zA-Z]/g,' ')
+    retryPrompt = retryPrompt.replace(/[^a-zA-Z]/g,' ')
       .split(/\s+/)
       .map(x=>x.trim())
       .filter(Boolean)
@@ -177,7 +177,7 @@ export async function onRequest(request, env, ctx) {
       .filter(Boolean)
       .join(' ');
     if (avg < 89) {
-      inputs.prompt = retyPrompt;
+      inputs.prompt = retryPrompt;
       bytes = await aiRunBytes(imageModel, inputs);
       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }else{
@@ -185,7 +185,7 @@ export async function onRequest(request, env, ctx) {
     }
   
     if (avg < 89) {
-      inputs.prompt = 'a family friendly artistic image of ' + retyPrompt;
+      inputs.prompt = 'a family friendly artistic image of ' + retryPrompt;
       bytes = await aiRunBytes(imageModel, inputs);
       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
     }else{
