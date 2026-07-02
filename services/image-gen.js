@@ -44,7 +44,7 @@ const promptCache = {};
 const aiRunBytes = async (...args) => {
   const inputs = args[1];
   //inputs.num_steps = Math.max(String(inputs.prompt).split(/\s/).length,4);
- // args[1] = inputs;
+  // args[1] = inputs;
   const stream = await env.AI.run(...args);
   const resStream = new Response(stream);
   const bytes = await resStream.bytes();
@@ -111,7 +111,6 @@ export async function onRequest(request, env, ctx) {
   let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
   const image = reqURL.searchParams.get('image');
   const cacheKey = prompt; // snapshot BEFORE retry loop touches 
-  
 
   if (promptCache[cacheKey]) {
     return new Response(new Uint8Array(promptCache[prompt]), {
@@ -162,36 +161,36 @@ export async function onRequest(request, env, ctx) {
 
   let bytes = await aiRunBytes(imageModel, inputs);
   let avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-  
+
   if (avg < 89) {
     inputs.prompt = 'a family friendly artistic image of ' + prompt;
     bytes = await aiRunBytes(imageModel, inputs);
     avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
   }
-  
+
   let retryPrompt = prompt;
   const numRetries = 3;
-  for(const _ of Array(numRetries)){
-    retryPrompt = retryPrompt.replace(/[^a-zA-Z]/g,' ')
+  for (const _ of Array(numRetries)) {
+    retryPrompt = retryPrompt.replace(/[^a-zA-Z]/g, ' ')
       .split(/\s+/)
-      .map(x=>x.trim())
+      .map(x => x.trim())
       .filter(Boolean)
-      .map(x =>x.length>3?x.slice(0, -1):x)
+      .map(x => x.length > 3 ? x.slice(0, -1) : x)
       .filter(Boolean)
       .join(' ');
     if (avg < 89) {
       inputs.prompt = retryPrompt;
       bytes = await aiRunBytes(imageModel, inputs);
       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-    }else{
+    } else {
       break;
     }
-  
+
     if (avg < 89) {
       inputs.prompt = 'a family friendly artistic image of ' + retryPrompt;
       bytes = await aiRunBytes(imageModel, inputs);
       avg = [...bytes].reduce((x, y) => x + y, 0) / bytes.length;
-    }else{
+    } else {
       break;
     }
   }
