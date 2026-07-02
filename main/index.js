@@ -1,6 +1,6 @@
 const hostTargets = [
   "en.wikipedia.org",
-  "en.wiktionary.org",
+  //"en.wiktionary.org",
 ];
 
 if (typeof env === "undefined") {
