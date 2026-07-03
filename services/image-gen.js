@@ -1,5 +1,15 @@
 globalThis.env ??= {};
-let imageModel = env.IMAGE_MODEL;
+let imageModel;
+
+const getImageModel = async()=>{
+  let model;
+  try{
+    const res = await fetch('https://best-image-model.api-cloud-flare.workers.dev/');
+    model = (await res.json()).model;
+  }catch{}
+  return model || env.IMAGE_MODEL || "@cf/bytedance/stable-diffusion-xl-lightning";
+};
+
 const cacheHeaders = {};
 const seconds = 31535000;
 for (const header of ["CDN-Cache-Control", "Cache-Control", "Cloudflare-CDN-Cache-Control", "Surrogate-Control", "Vercel-CDN-Cache-Control"]) {
@@ -107,6 +117,12 @@ export async function onRequest(request, env, ctx) {
       status: 400
     });
   }*/
+  if(!imageModel){
+    imageModel = getImageModel();
+  }
+  if(imageModel instanceof Promise){
+    imageModel = await imageModel;
+  }
   const reqURL = new URL(request.url);
   let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
   const image = reqURL.searchParams.get('image');
