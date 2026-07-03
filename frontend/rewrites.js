@@ -117,7 +117,7 @@
               one,
               two
             ]
-          ).join("/");
+          ).join("/").replaceAll(',',' ');
     }
   };
   onReady(redirect);
