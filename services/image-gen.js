@@ -43,8 +43,8 @@ const promptCache = {};
 
 const aiRunBytes = async (...args) => {
   const inputs = args[1];
-  //inputs.num_steps = Math.max(String(inputs.prompt).split(/\s/).length,4);
-  // args[1] = inputs;
+  inputs.num_steps = Math.min(Math.max(String(inputs.prompt).split(/\s/).length,4),20);
+  args[1] = inputs;
   const stream = await env.AI.run(...args);
   const resStream = new Response(stream);
   const bytes = await resStream.bytes();
