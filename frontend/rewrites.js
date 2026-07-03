@@ -98,16 +98,16 @@
   onReady(()=>{
     const doc = String((document.body||document.firstElemenChild).innerHTML).toLowerCase();
     if(/Does\s+Not\s+Have\s+An\s+Article\s+With\s+This\s+Exact\s+Name/i.test(doc)){
-      let query = decodeURIComponent(String(location.href.split("wiki")[1])).replaceAll('_',' ');
+      let query = decodeURIComponent(String(location.pathname.split("wiki")[1])).replaceAll('_',' ');
         let parts = query.split(/\/|\s+/).map(x => x.trim()).filter(Boolean);
         let one;
         let two;
         if (parts.length > 1) {
-          one = parts.slice(0, ~~(parts.length / 2)).join(' ');
-          two = parts.slice(~~(parts.length / 2));
+          one = parts.slice(0,parts.length / 2).join(' ');
+          two = parts.slice(parts.length / 2);
         } else {
-          one = query.slice(0, ~~(query.length / 2));
-          two = query.slice(~~(query.length / 2)).join(' ');
+          one = query.slice(0, query.length / 2);
+          two = query.slice(query.length / 2).join(' ');
         }
         location.href =
           location.origin +
