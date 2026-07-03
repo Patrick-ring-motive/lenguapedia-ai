@@ -89,10 +89,10 @@
 
 (()=>{
   const onReady = fn =>{
-      if (['complete', 'interactive'].includes(document.readyState)) {
-  fn();
+  if (['complete', 'interactive'].includes(document.readyState)) {
+    fn();
    } else {
-  document.addEventListener('DOMContentLoaded', colorDoc);
+    document.addEventListener('DOMContentLoaded', fn);
   }
   };
   onReady(()=>{
