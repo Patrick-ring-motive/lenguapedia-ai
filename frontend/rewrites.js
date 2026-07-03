@@ -95,7 +95,7 @@
     document.addEventListener('DOMContentLoaded', fn);
   }
   };
-  onReady(()=>{
+  const redirect = ()=>{
     const doc = String((document.body||document.firstElemenChild).innerHTML).toLowerCase();
     if(/Does\s+Not\s+Have\s+An\s+Article\s+With\s+This\s+Exact\s+Name/i.test(doc)){
       let query = decodeURIComponent(String(location.pathname.split("wiki")[1])).replaceAll('_',' ');
@@ -119,6 +119,8 @@
             ]
           ).join("/");
     }
-  });
+  };
+  onReady(redirect);
+  document.addEventListener("readystatechange",redirect);
 })();
 
