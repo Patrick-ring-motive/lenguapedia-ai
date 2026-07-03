@@ -86,3 +86,20 @@
   // await import('https://patrick-ring-motive.github.io/electric/color.js');
   // await import('https://patrick-ring-motive.github.io/electric/hooks.js');
 })();
+
+(()=>{
+  const onReady = fn =>{
+      if (['complete', 'interactive'].includes(document.readyState)) {
+  fn();
+   } else {
+  document.addEventListener('DOMContentLoaded', colorDoc);
+  }
+  };
+  onReady(()=>{
+    const doc = String((document.body||document.firstElemenChild).innerHTML).toLowerCase();
+    if(/Does\s+Not\s+Have\s+An\s+Article\s+With\s+This\s+Exact\s+Name/i.test(doc)){
+      
+    }
+  });
+})();
+
