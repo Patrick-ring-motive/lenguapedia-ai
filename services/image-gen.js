@@ -1,12 +1,12 @@
 globalThis.env ??= {};
 let imageModel;
 
-const getImageModel = async()=>{
+const getImageModel = async () => {
   let model;
-  try{
+  try {
     const res = await fetch('https://best-image-model.api-cloud-flare.workers.dev/');
     model = (await res.json()).model;
-  }catch{}
+  } catch {}
   return model || env.IMAGE_MODEL || "@cf/bytedance/stable-diffusion-xl-lightning";
 };
 
@@ -53,7 +53,7 @@ const promptCache = {};
 
 const aiRunBytes = async (...args) => {
   const inputs = args[1];
-  inputs.num_steps = Math.min(Math.max(String(inputs.prompt).split(/\s/).length,4),20);
+  inputs.num_steps = Math.min(Math.max(String(inputs.prompt).split(/\s/).length, 4), 20);
   args[1] = inputs;
   const stream = await env.AI.run(...args);
   const resStream = new Response(stream);
@@ -117,10 +117,10 @@ export async function onRequest(request, env, ctx) {
       status: 400
     });
   }*/
-  if(!imageModel){
+  if (!imageModel) {
     imageModel = getImageModel();
   }
-  if(imageModel instanceof Promise){
+  if (imageModel instanceof Promise) {
     imageModel = await imageModel;
   }
   const reqURL = new URL(request.url);
