@@ -40,8 +40,7 @@ const fetchResponse = async (...args) => {
   }
 };
 
-async function getRandomWikipediaTitle() {
-  const url =
+const url =
     'https://en.wikipedia.org/w/api.php' +
     '?action=query' +
     '&generator=random' +
@@ -50,6 +49,8 @@ async function getRandomWikipediaTitle() {
     '&format=json' +
     '&origin=*';
 
+
+async function getRandomWikipediaTitle() {
   const data = await fetchResponse(url, {
     headers: {
       'user-agent': 'lenguapedia'
@@ -88,8 +89,7 @@ const norm = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
-function merger(article1, article2) {
-  const replacers = [
+const replacers = [
     "the",
     "a",
     "an",
@@ -124,15 +124,20 @@ function merger(article1, article2) {
     "been",
     "from",
     "will"
-  ];
-  const rex = replacers.map((x) =>
+];
+  
+const rex = replacers.map((x) =>
     RegExp([
       `\b${x}\s+(a\s+|an\s+|the\s+)?\w+\b`,
       `\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`
     ].join('|'), "g"),
-  );
+);
+const rex_len = rex.length;
+
+function merger(article1, article2) {
   let test = [];
-  for (const r of rex) {
+  for(let rex_i=0;rex_i!==rex_len;++rex_i){
+    const r = rex[rex_i];
     let matches = (
       norm(String(article2)).replace(/\n/g, " ").match(r) || []
     ).filter(
