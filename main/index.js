@@ -127,7 +127,7 @@ function merger(article1, article2) {
   ];
   const rex = replacers.map((x) =>
     RegExp([
-      `\b${x}\s+(a\s+|an\s+|the\s+)?\w+\b`
+      `\b${x}\s+(a\s+|an\s+|the\s+)?\w+\b`,
       `\\b${x}\\s+(a\\s+|an\\s+|the\\s+)?\\w+\\b`
     ].join('|'), "g"),
   );
