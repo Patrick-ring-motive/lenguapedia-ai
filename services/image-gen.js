@@ -265,5 +265,5 @@ export async function onRequest(request, env, ctx) {
   }
 
   const imgURL = await getImageURL(prompt);
-  return fetchResponse(imgURL);
+  return fetchResponse(imgURL,request);
 }
