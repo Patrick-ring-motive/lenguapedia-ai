@@ -78,7 +78,8 @@
   const style = document.createElement('style');
   style.textContent = `
   button,title,a,th,thead,nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
-  [class*="mw-logo"]{opacity:0 !important;}
+  
+  img[src*="wikipedia-wordmark"],[class*="mw-logo"]{opacity:0 !important;}
   `;
   (document.body || document.firstElementChild).appendChild(style);
 })();
