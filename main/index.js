@@ -161,9 +161,33 @@ function merger(article1, article2) {
   return article1;
 }
 
+const normalizeRequest = (request)=>{
+    const url = new URL(request.url);
+    const reqHost = RegExp(request.headers.get('x-gateway-source'),'gi');
+    const reqHeaders = new Headers(request.headers);
+    reqHeaders.delete('x-gateway-source');
+    
+    for(const [key,value] of reqHeaders){
+      reqHeaders.set(key,value
+        .replaceAll(gatewayPrefix,url.origin+'/')
+        .replaceAll(gatewayHost,url.host)
+        .replaceAll(reqHost,url.host)
+      );
+    }
+    const requestInit = {
+      method: request.method,
+      headers: reqHeaders,
+    };
+    if(request.body){
+      requestInit.body = request.body;
+    }
+    return new Request(request.url,requestInit);
+};
+
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 globalThis.onRequest = async (request, env, ctx) => {
+  request = normalizeRequest(request);
   try {
     const referHost = request.headers.get('referer') && new URL(request.headers.get('referer')).host;
     const localhost = new URL(request.url).host;
