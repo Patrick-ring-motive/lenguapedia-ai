@@ -1,45 +1,43 @@
 globalThis.env ??= {};
 
 async function searchCommons(query) {
-	  try{
-		  const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&list=search&srnamespace=6&srsearch=${encodeURIComponent(query)}+filetype:bitmap|drawing&srlimit=1&format=json`;
-		  const res = await fetch(url);
-		  const data = await res.json();
-		  return data.query.search[0]?.title??'';
-	  }catch(e){
-		  console.warn(e);
-		  return '';
-	  }
+  try {
+    const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&list=search&srnamespace=6&srsearch=${encodeURIComponent(query)}+filetype:bitmap|drawing&srlimit=1&format=json`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.query.search[0]?.title ?? '';
+  } catch (e) {
+    console.warn(e);
+    return '';
+  }
 }
-	
-	async function searchAny(query){
-		try{
-			query = decodeURIComponent(String(query)).replaceAll('+',' ').replaceAll(/\s+/g,' OR ');
-			return await searchCommons(query);
-		}catch(e){
-			console.warn(e);
-			return '';
-		}
-	}
-	
-	async function search(query){
-		let ans = (await searchCommons(query)).trim();
-		if(!ans){
-			ans = await searchAny(query);
-		}
-		return ans;
-	}
 
+async function searchAny(query) {
+  try {
+    query = decodeURIComponent(String(query)).replaceAll('+', ' ').replaceAll(/\s+/g, ' OR ');
+    return await searchCommons(query);
+  } catch (e) {
+    console.warn(e);
+    return '';
+  }
+}
 
+async function search(query) {
+  let ans = (await searchCommons(query)).trim();
+  if (!ans) {
+    ans = await searchAny(query);
+  }
+  return ans;
+}
 
-    async function getImageURL(title) {
-      const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&titles=${encodeURIComponent(title)}&prop=imageinfo&iiprop=url|mediatype&format=json`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const pages = Object.values(data.query.pages);
-      const info = pages[0]?.imageinfo?.[0];
-      return info?.url;
-    }
+async function getImageURL(title) {
+  const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&titles=${encodeURIComponent(title)}&prop=imageinfo&iiprop=url|mediatype&format=json`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const pages = Object.values(data.query.pages);
+  const info = pages[0]?.imageinfo?.[0];
+  return info?.url;
+}
 
 let imageModel;
 
@@ -265,5 +263,5 @@ export async function onRequest(request, env, ctx) {
   }
 
   const imgURL = await getImageURL(prompt);
-  return fetchResponse(imgURL,request);
+  return fetchResponse(imgURL, request);
 }
