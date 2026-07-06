@@ -225,7 +225,7 @@ export async function onRequest(request, env, ctx) {
   }
 
   let retryPrompt = prompt;
-  const numRetries = 3;
+  const numRetries = 2;
   for (const _ of Array(numRetries)) {
     retryPrompt = retryPrompt.replace(/[^a-zA-Z]/g, ' ')
       .split(/\s+/)
