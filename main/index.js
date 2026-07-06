@@ -161,6 +161,9 @@ function merger(article1, article2) {
   return article1;
 }
 
+const gatewayHost = /gateway\.ai\.cloudflare\.com/gi;
+const gatewayPrefix =/^https:\/\/gateway\.ai\.cloudflare\.com\/v1\/[^\/]+\/[^\/]+\/[^\/]+\//gi;
+
 const normalizeRequest = (request)=>{
     const url = new URL(request.url);
     const reqHost = RegExp(request.headers.get('x-gateway-source'),'gi');
