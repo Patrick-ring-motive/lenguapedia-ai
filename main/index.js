@@ -283,6 +283,7 @@ xxmain img{width:100%;max-width:100vh;min-height:100% !important;}
 
 .img-wrap{border:none !important;}
 
+img[src*="wikipedia-wordmark"],
 [class*="mw-logo"],
 .mw-logo-wordmark,
 main img {
