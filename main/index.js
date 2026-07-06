@@ -166,6 +166,7 @@ const gatewayPrefix =/^https:\/\/gateway\.ai\.cloudflare\.com\/v1\/[^\/]+\/[^\/]
 
 const normalizeRequest = (request)=>{
     const url = new URL(request.url);
+    url.pathname = (url.pathname || '').replace(/^\/v1/,'');
     const reqHost = RegExp(request.headers.get('x-gateway-source'),'gi');
     const reqHeaders = new Headers(request.headers);
     reqHeaders.delete('x-gateway-source');
@@ -184,7 +185,7 @@ const normalizeRequest = (request)=>{
     if(request.body){
       requestInit.body = request.body;
     }
-    return new Request(request.url,requestInit);
+    return new Request(String(url),requestInit);
 };
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
