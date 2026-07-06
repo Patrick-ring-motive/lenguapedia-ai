@@ -162,30 +162,30 @@ function merger(article1, article2) {
 }
 
 const gatewayHost = /gateway\.ai\.cloudflare\.com/gi;
-const gatewayPrefix =/^https:\/\/gateway\.ai\.cloudflare\.com\/v1\/[^\/]+\/[^\/]+\/[^\/]+\//gi;
+const gatewayPrefix = /^https:\/\/gateway\.ai\.cloudflare\.com\/v1\/[^\/]+\/[^\/]+\/[^\/]+\//gi;
 
-const normalizeRequest = (request)=>{
-    const url = new URL(request.url);
-    url.pathname = (url.pathname || '').replace(/^\/v1/,'');
-    const reqHost = RegExp(String(request.headers.get('x-gateway-source')),'gi');
-    const reqHeaders = new Headers(request.headers);
-    reqHeaders.delete('x-gateway-source');
-    
-    for(const [key,value] of reqHeaders){
-      reqHeaders.set(key,value
-        .replaceAll(gatewayPrefix,url.origin+'/')
-        .replaceAll(gatewayHost,url.host)
-        .replaceAll(reqHost,url.host)
-      );
-    }
-    const requestInit = {
-      method: request.method,
-      headers: reqHeaders,
-    };
-    if(request.body){
-      requestInit.body = request.body;
-    }
-    return new Request(String(url),requestInit);
+const normalizeRequest = (request) => {
+  const url = new URL(request.url);
+  url.pathname = (url.pathname || '').replace(/^\/v1/, '');
+  const reqHost = RegExp(String(request.headers.get('x-gateway-source')), 'gi');
+  const reqHeaders = new Headers(request.headers);
+  reqHeaders.delete('x-gateway-source');
+
+  for (const [key, value] of reqHeaders) {
+    reqHeaders.set(key, value
+      .replaceAll(gatewayPrefix, url.origin + '/')
+      .replaceAll(gatewayHost, url.host)
+      .replaceAll(reqHost, url.host)
+    );
+  }
+  const requestInit = {
+    method: request.method,
+    headers: reqHeaders,
+  };
+  if (request.body) {
+    requestInit.body = request.body;
+  }
+  return new Request(String(url), requestInit);
 };
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -195,7 +195,7 @@ globalThis.onRequest = async (request, env, ctx) => {
   try {
     const referHost = request.headers.get('referer') && new URL(request.headers.get('referer')).host;
     const localhost = new URL(request.url).host;
-    if ((referHost && (referHost !== localhost))||(request.headers.get('x-provider-key')!==env.PROVIDER_KEY)) {
+    if ((referHost && (referHost !== localhost)) || (request.headers.get('x-provider-key') !== env.PROVIDER_KEY)) {
       return new Response(null, {
         status: 400
       });
