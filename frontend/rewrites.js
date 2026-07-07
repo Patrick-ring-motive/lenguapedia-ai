@@ -46,7 +46,7 @@
   const ie = [...document.querySelectorAll('img')];
   for (const i of ie) {
     i.onerror = (() => {
-      i.src = 'https://image-gen.lenguapedia-services.workers.dev?prompt=' + String(i.outerHTML).replaceAll(/src.+workers.dev/gi,'');
+      i.src = 'https://image-gen.lenguapedia-services.workers.dev?prompt=' + String(i.outerHTML).replaceAll(/src.+workers.dev/gi, '');
     });
   }
   const ax = [...document.querySelectorAll('main a[href]')];
