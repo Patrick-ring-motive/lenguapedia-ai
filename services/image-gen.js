@@ -3,7 +3,7 @@ globalThis.env ??= {};
 async function searchCommons(query) {
   try {
     const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&list=search&srnamespace=6&srsearch=${encodeURIComponent(query)}+filetype:bitmap|drawing&srlimit=1&format=json`;
-    const res = await fetch(url);
+    const res = await fetch(url,{headers:{'user-agent':url}});
     const data = await res.json();
     return data.query.search[0]?.title ?? '';
   } catch (e) {
