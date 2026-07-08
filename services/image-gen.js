@@ -3,7 +3,11 @@ globalThis.env ??= {};
 async function searchCommons(query) {
   try {
     const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&list=search&srnamespace=6&srsearch=${encodeURIComponent(query)}+filetype:bitmap|drawing&srlimit=1&format=json`;
-    const res = await fetch(url,{headers:{'user-agent':url}});
+    const res = await fetch(url, {
+      headers: {
+        'user-agent': url
+      }
+    });
     const data = await res.json();
     return data.query.search[0]?.title ?? '';
   } catch (e) {
@@ -32,7 +36,11 @@ async function search(query) {
 
 async function getImageURL(title) {
   const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&titles=${encodeURIComponent(title)}&prop=imageinfo&iiprop=url|mediatype&format=json`;
-  const res = await fetch(url,{headers:{'user-agent':url}});
+  const res = await fetch(url, {
+    headers: {
+      'user-agent': url
+    }
+  });
   const data = await res.json();
   const pages = Object.values(data.query.pages);
   const info = pages[0]?.imageinfo?.[0];
