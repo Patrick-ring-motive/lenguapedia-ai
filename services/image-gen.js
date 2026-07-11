@@ -268,6 +268,13 @@ export async function onRequest(request, env, ctx) {
         ...cacheHeaders
       }
     }));
+    return new Response(bytes, {
+      headers: {
+        "access-control-allow-origin": "*",
+        "content-type": "image/jpg",
+        ...cacheHeaders
+      }
+    });
   }
 
   const imgURL = await getImageURL(prompt);
