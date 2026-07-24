@@ -14,7 +14,8 @@
   };
 
   const swapWiki = () => {
-
+    const docTitle = document.title;
+    const artTitle = document.querySelector('.mw-page-title-main')?.textContent;
     let node, walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
     while (node = walk.nextNode()) {
       if (node.parentElement.tagName == 'SCRIPT') {
@@ -25,6 +26,9 @@
       }
       let nodeText = node.textContent;
       nodeText = nodeText.replaceAll(/wikipedia/gi, 'Lenguapedia');
+      if(artTitle && artTitle !== docTitle){
+        nodeText = nodeText.replaceAll(RegExp(artTitle,'gi'),docTitle);
+      }
       if (nodeText != node.textContent) {
         node.textContent = nodeText;
       }
