@@ -172,7 +172,8 @@ export async function onRequest(request, env, ctx) {
     imageModel = await imageModel;
   }
   const reqURL = new URL(request.url);
-  let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined'
+  let prompt = String(reqURL.searchParams.get('prompt') || request.headers.get('prompt') || reqURL.search).trim().toLowerCase() || 'undefined';
+  let nprompt = String(reqURL.searchParams.get('nprompt') || request.headers.get('nprompt') || reqURL.search||'').trim().toLowerCase();
   const image = reqURL.searchParams.get('image');
   const cacheKey = prompt; // snapshot BEFORE retry loop touches 
 
@@ -197,6 +198,9 @@ export async function onRequest(request, env, ctx) {
     ...imgDefaults
   };
 
+  if(nprompt){
+    inputs.negative_prompt = nprompt;
+  }
   if (image) {
     const response = await imgDesc(image);
     inputs.prompt = JSON.stringify({
