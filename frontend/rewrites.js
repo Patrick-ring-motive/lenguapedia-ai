@@ -14,6 +14,7 @@
   };
 
   const swapWiki = () => {
+    document.title = decodeURIComponent(document.title);
     const docTitle = document.title;
     const artTitle = document.querySelector('.mw-page-title-main')?.textContent;
     let node, walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
