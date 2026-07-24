@@ -26,7 +26,7 @@
       }
       let nodeText = node.textContent;
       nodeText = nodeText.replaceAll(/wikipedia/gi, 'Lenguapedia');
-      if(artTitle && artTitle !== docTitle){
+      if(artTitle && artTitle !== docTitle && location.href.includes('merge')){
         nodeText = nodeText.replaceAll(RegExp(artTitle,'gi'),docTitle);
       }
       if (nodeText != node.textContent) {
