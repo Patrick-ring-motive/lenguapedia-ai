@@ -56,7 +56,8 @@ async function fetchMerger(article1,article2){
 		}catch{}
 	return String(txt).replaceAll(x+x,x)
 		.replaceAll(x+x,x)
-	    .replaceAll(x+x,x);
+	    .replaceAll(x+x,x)
+		.replaceAll(x+'t',String.fromCharCode(9));
 }
 
 
