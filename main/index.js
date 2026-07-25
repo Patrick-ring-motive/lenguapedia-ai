@@ -54,7 +54,9 @@ async function fetchMerger(article1,article2){
 		try{
 			txt = JSON.parse(txt).article;
 		}catch{}
-	return txt.replaceAll(x+x,x);
+	return String(txt).replaceAll(x+x,x)
+		.replaceAll(x+x,x)
+	    .replaceAll(x+x,x);
 }
 
 
