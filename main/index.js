@@ -40,6 +40,24 @@ const fetchResponse = async (...args) => {
   }
 };
 
+async function fetchMerger(article1,article2){
+	const req = new Request(env.MERGER_URL,{
+			method:'POST',
+			body:JSON.stringify({
+				article1,
+				article2
+		})
+	});
+		const res = await fetchResponse(req);
+		const txt = await res.text();
+		try{
+			return JSON.parse(txt).article;
+		}catch{
+			return txt;
+		}
+}
+
+
 const url =
   'https://en.wikipedia.org/w/api.php' +
   '?action=query' +
@@ -233,7 +251,7 @@ globalThis.onRequest = async (request, env, ctx) => {
           `<title>${urlparts[4]} ${urlparts[5]}</title>`,
         ) +
         "<main>" +
-        merger(art1, art2)
+        await fetchMerger(art1, art2)
         .replaceAll(
           new RegExp(
             `([^a-zA-Z]|^)${escapeRegExp(title1)}(e?s?[^a-zA-Z]|$)`,
