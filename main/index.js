@@ -251,7 +251,7 @@ globalThis.onRequest = async (request, env, ctx) => {
           `<title>${urlparts[4]} ${urlparts[5]}</title>`,
         ) +
         "<main>" +
-        await fetchMerger(art1, art2)
+        (await fetchMerger(art1, art2))
         .replaceAll(
           new RegExp(
             `([^a-zA-Z]|^)${escapeRegExp(title1)}(e?s?[^a-zA-Z]|$)`,
