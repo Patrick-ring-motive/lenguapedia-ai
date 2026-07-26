@@ -40,50 +40,49 @@ const fetchResponse = async (...args) => {
   }
 };
 
-const unescapeFlat = (()=>{
-	const x = String.fromCharCode(92);
-	const xx = x + x;
-	const q = String.fromCharCode(39);
-	const qq = String.fromCharCode(34);
-	const t = String.fromCharCode(9);
-	const n = String.fromCharCode(10);
-	const r = String.fromCharCode(13);
-	const o = String.fromCharCode(0);
-	const v = String.fromCharCode(11);
-	const b = String.fromCharCode(8);
-	const f = String.fromCharCode(12);
-	return (txt) =>{
-	txt = String(txt??'');
-	while(txt.includes(xx)){
-		txt = txt.replaceAll(xx,x);
-	}
-	return txt.replaceAll(x+'t',t)
-	    .replaceAll(x+qq,qq)
-		.replaceAll(x+q,q)
-		.replaceAll(x+'r',r)
-	    .replaceAll(x+'n',n)
-		.replaceAll(x+'0',o)
-	    .replaceAll(x+'v',v)
-    	.replaceAll(x+'b',b)
-	    .replaceAll(x+'f',f);
-};
+const unescapeFlat = (() => {
+  const x = String.fromCharCode(92);
+  const xx = x + x;
+  const q = String.fromCharCode(39);
+  const qq = String.fromCharCode(34);
+  const t = String.fromCharCode(9);
+  const n = String.fromCharCode(10);
+  const r = String.fromCharCode(13);
+  const o = String.fromCharCode(0);
+  const v = String.fromCharCode(11);
+  const b = String.fromCharCode(8);
+  const f = String.fromCharCode(12);
+  return (txt) => {
+    txt = String(txt ?? '');
+    while (txt.includes(xx)) {
+      txt = txt.replaceAll(xx, x);
+    }
+    return txt.replaceAll(x + 't', t)
+      .replaceAll(x + qq, qq)
+      .replaceAll(x + q, q)
+      .replaceAll(x + 'r', r)
+      .replaceAll(x + 'n', n)
+      .replaceAll(x + '0', o)
+      .replaceAll(x + 'v', v)
+      .replaceAll(x + 'b', b)
+      .replaceAll(x + 'f', f);
+  };
 })();
-async function fetchMerger(article1,article2){
-	const req = new Request(env.MERGER_URL,{
-			method:'POST',
-			body:JSON.stringify({
-				article1,
-				article2
-		})
-	});
-		const res = await fetchResponse(req);
-		let txt = await res.text();
-		try{
-			txt = JSON.parse(txt).article;
-		}catch{}
-	return unescapeFlat(txt).trim().replaceAll(/^["]|["]$/g,'');
+async function fetchMerger(article1, article2) {
+  const req = new Request(env.MERGER_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      article1,
+      article2
+    })
+  });
+  const res = await fetchResponse(req);
+  let txt = await res.text();
+  try {
+    txt = JSON.parse(txt).article;
+  } catch {}
+  return unescapeFlat(txt).trim().replaceAll(/^["]|["]$/g, '');
 }
-
 
 const url =
   'https://en.wikipedia.org/w/api.php' +
@@ -277,7 +276,7 @@ globalThis.onRequest = async (request, env, ctx) => {
           /<title.+<\/title>/,
           `<title>${urlparts[4]} ${urlparts[5]}</title>`,
         ) +
-		  
+
         `<style>
       button,title,a,th,thead,nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
       img[src][srcset]{display:none;}
@@ -328,7 +327,7 @@ main img[loaded="true"] {
   }
 }
 img[srcset]{display:none;}
-      </style>`+
+      </style>` +
         "<main>" +
         (await fetchMerger(art1, art2))
         .replaceAll(
@@ -350,7 +349,7 @@ img[srcset]{display:none;}
           return `<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`;
         }) +
         "</main>" +
-      `<script>
+        `<script>
       [...document.querySelectorAll('img[src][srcset]')].forEach(x=>x.removeAttribute('srcset'));
       [...document.querySelectorAll('img[slop]')].forEach(x=>x.parentElement.classList.add('img-wrap'));
       
