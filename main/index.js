@@ -322,6 +322,7 @@ xxmain img{width:100%;max-width:100vh;min-height:100% !important;}
 }
 
 /* Hide spinner when image is loaded */
+[href$="edit"],
 .img-wrap:has(img[loaded="true"])::before {
   display: none;
 }
