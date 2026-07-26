@@ -277,27 +277,7 @@ globalThis.onRequest = async (request, env, ctx) => {
           /<title.+<\/title>/,
           `<title>${urlparts[4]} ${urlparts[5]}</title>`,
         ) +
-        "<main>" +
-        (await fetchMerger(art1, art2))
-        .replaceAll(
-          new RegExp(
-            `([^a-zA-Z]|^)${escapeRegExp(title1)}(e?s?[^a-zA-Z]|$)`,
-            "gi",
-          ),
-          `$1${combined}$2`,
-        )
-        .replaceAll(/<img [^>]*src?="[^"]+"/g, (x) => {
-          const url = new URL(
-            "https://image-gen.lenguapedia-services.workers.dev/",
-          );
-          const txt = x.replace(/[^a-zA-Z0-9]/g, " ");
-          url.searchParams.set(
-            "prompt",
-            `${urlparts[5]} ${urlparts[5]} ${urlparts[4]}${urlparts[5]} ${txt}`,
-          );
-          return `<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`;
-        }) +
-        "</main>" +
+		  
         `<style>
       button,title,a,th,thead,nav,b,strong,header,h1,h2,h3,h4{text-transform:capitalize;}
       img[src][srcset]{display:none;}
@@ -348,8 +328,29 @@ main img[loaded="true"] {
   }
 }
 img[srcset]{display:none;}
-      </style>
-      <script>
+      </style>`+
+        "<main>" +
+        (await fetchMerger(art1, art2))
+        .replaceAll(
+          new RegExp(
+            `([^a-zA-Z]|^)${escapeRegExp(title1)}(e?s?[^a-zA-Z]|$)`,
+            "gi",
+          ),
+          `$1${combined}$2`,
+        )
+        .replaceAll(/<img [^>]*src?="[^"]+"/g, (x) => {
+          const url = new URL(
+            "https://image-gen.lenguapedia-services.workers.dev/",
+          );
+          const txt = x.replace(/[^a-zA-Z0-9]/g, " ");
+          url.searchParams.set(
+            "prompt",
+            `${urlparts[5]} ${urlparts[5]} ${urlparts[4]}${urlparts[5]} ${txt}`,
+          );
+          return `<img loading="lazy" slop onload="this.setAttribute('loaded', 'true')" src="${url}"`;
+        }) +
+        "</main>" +
+      `<script>
       [...document.querySelectorAll('img[src][srcset]')].forEach(x=>x.removeAttribute('srcset'));
       [...document.querySelectorAll('img[slop]')].forEach(x=>x.parentElement.classList.add('img-wrap'));
       
