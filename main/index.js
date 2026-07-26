@@ -42,6 +42,9 @@ const fetchResponse = async (...args) => {
 
 async function fetchMerger(article1,article2){
 	const x = String.fromCharCode(92);
+	const q = String.fromCharCode(34);
+	const t = String.fromCharCode(9);
+	const n = String.fromCharCode(10);
 	const req = new Request(env.MERGER_URL,{
 			method:'POST',
 			body:JSON.stringify({
@@ -57,7 +60,9 @@ async function fetchMerger(article1,article2){
 	return String(txt).replaceAll(x+x,x)
 		.replaceAll(x+x,x)
 	    .replaceAll(x+x,x)
-		.replaceAll(x+'t',String.fromCharCode(9));
+		.replaceAll(x+'t',t)
+	    .replaceAll(x+q,q)
+	    .replaceAll(x+'n',n);
 }
 
 
