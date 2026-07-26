@@ -70,7 +70,7 @@ async function fetchMerger(article1,article2){
 		try{
 			txt = JSON.parse(txt).article;
 		}catch{}
-	return uncut(txt);
+	return uncut(txt).trim().replaceAll(/^["]|["]$/g,'');
 }
 
 
