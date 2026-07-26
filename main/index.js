@@ -40,7 +40,7 @@ const fetchResponse = async (...args) => {
   }
 };
 
-const uncut = txt =>{
+const unescapeFlat = txt =>{
 	txt = String(txt??'');
 	const x = String.fromCharCode(92);
 	const xx = x + x;
@@ -80,7 +80,7 @@ async function fetchMerger(article1,article2){
 		try{
 			txt = JSON.parse(txt).article;
 		}catch{}
-	return uncut(txt).trim().replaceAll(/^["]|["]$/g,'');
+	return unescapeFlat(txt).trim().replaceAll(/^["]|["]$/g,'');
 }
 
 
