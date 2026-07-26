@@ -40,8 +40,7 @@ const fetchResponse = async (...args) => {
   }
 };
 
-const unescapeFlat = txt =>{
-	txt = String(txt??'');
+const unescapeFlat = (()=>{
 	const x = String.fromCharCode(92);
 	const xx = x + x;
 	const q = String.fromCharCode(39);
@@ -53,6 +52,8 @@ const unescapeFlat = txt =>{
 	const v = String.fromCharCode(11);
 	const b = String.fromCharCode(8);
 	const f = String.fromCharCode(12);
+	return (txt) =>{
+	txt = String(txt??'');
 	while(txt.includes(xx)){
 		txt = txt.replaceAll(xx,x);
 	}
@@ -66,7 +67,7 @@ const unescapeFlat = txt =>{
     	.replaceAll(x+'b',b)
 	    .replaceAll(x+'f',f);
 };
-
+})();
 async function fetchMerger(article1,article2){
 	const req = new Request(env.MERGER_URL,{
 			method:'POST',
