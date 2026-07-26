@@ -40,11 +40,24 @@ const fetchResponse = async (...args) => {
   }
 };
 
-async function fetchMerger(article1,article2){
+const uncut = txt =>{
 	const x = String.fromCharCode(92);
-	const q = String.fromCharCode(34);
+	const q = String.fromCharCode(39);
+	const qq = String.fromCharCode(34);
 	const t = String.fromCharCode(9);
 	const n = String.fromCharCode(10);
+	const r = String.fromCharCode(13);
+	return String(txt).replaceAll(x+x,x)
+		.replaceAll(x+x,x)
+	    .replaceAll(x+x,x)
+		.replaceAll(x+'t',t)
+	    .replaceAll(x+qq,qq)
+		.replaceAll(x+q,q)
+		.replaceAll(x+'r',r)
+	    .replaceAll(x+'n',n);
+};
+
+async function fetchMerger(article1,article2){
 	const req = new Request(env.MERGER_URL,{
 			method:'POST',
 			body:JSON.stringify({
@@ -57,12 +70,7 @@ async function fetchMerger(article1,article2){
 		try{
 			txt = JSON.parse(txt).article;
 		}catch{}
-	return String(txt).replaceAll(x+x,x)
-		.replaceAll(x+x,x)
-	    .replaceAll(x+x,x)
-		.replaceAll(x+'t',t)
-	    .replaceAll(x+q,q)
-	    .replaceAll(x+'n',n);
+	return uncut(txt);
 }
 
 
